@@ -170,12 +170,19 @@ class _SearchViewState extends State<SearchView> {
                     contentPadding: EdgeInsets.all(8.0),
                     title: Column(
                                   children: [
-                                    Column(children: [
-                                      TextButton(onPressed:(){displayProduct(trend_list[index]);}, child: Text(trend_list[index].product_name!, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, fontFamily: 'Roboto', backgroundColor: Colors.deepOrange[100]), selectionColor: Colors.deepOrange[200],)),
+                                    Container(
+                                      height:200,
+                                      width:150,
+                                      color: Colors.white,
+                                      child: Column(
+                                        children: [
+                                          TextButton(onPressed:(){displayProduct(trend_list[index]);}, child: Text(trend_list[index].product_name!, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, fontFamily: 'Roboto', backgroundColor: Colors.deepOrange[100]), selectionColor: Colors.deepOrange[200],)),
                                       SizedBox(height: 4.0),
                                       Image.network(trend_list[index].product_image!, height: 130, width: 120,),
                                       Text("Price: ${trend_list[index].product_price!}", style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, fontFamily: 'Roboto')),
-                                    ],)]
+                                        ],
+                                      ),
+                                    )]
                                 ),
                   ),
               ),
