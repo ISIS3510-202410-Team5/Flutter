@@ -32,7 +32,7 @@ class NavBar extends StatelessWidget {
         NavigationDestination(
           icon: Icon(Icons.shopping_cart_outlined),
           selectedIcon: Icon(Icons.shopping_cart),
-          label: 'MyCar'
+          label: 'MyCart'
         ),
 
         NavigationDestination(
