@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unimarket/Model/product_model.dart';
+import 'package:unimarket/Views/productDetail_view.dart';
 
 void main() => runApp(const SearchPage());
 
@@ -68,6 +69,7 @@ class _SearchViewState extends State<SearchView> {
     });
     product.product_views++;
     updateTrends(product);
+    Navigator.push(context, MaterialPageRoute(builder: (context) =>  ProductDetail_view(product)));
   }
   
   Set<String> selected = {'Selected Product'};
@@ -78,8 +80,9 @@ class _SearchViewState extends State<SearchView> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey.shade200,
-
+      
       appBar: AppBar(
+        centerTitle: true,
         backgroundColor: Colors.white,
         elevation: 0.0,
         title: Text("New Search", style: TextStyle(color: Colors.black, fontSize: 22.0, fontWeight: FontWeight.bold)),
