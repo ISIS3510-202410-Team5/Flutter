@@ -16,7 +16,7 @@ class NavBar extends StatelessWidget {
 
       // ignore: prefer_const_literals_to_create_immutables
       destinations: [
-        // ignore: prefer_const_constructors
+        
         NavigationDestination(
           icon: Icon(Icons.home_outlined),
           selectedIcon: Icon(Icons.home),

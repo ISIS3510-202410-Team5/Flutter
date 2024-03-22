@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:unimarket/Views/search_view_copy.dart';
-import 'package:unimarket/nav_bar.dart';
 import 'package:unimarket/Views/search_view.dart';
+import 'package:unimarket/nav_bar.dart';
+
 
 class BodyView extends StatefulWidget {
   const BodyView({super.key});
