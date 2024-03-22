@@ -14,7 +14,7 @@ class VistaLogin extends StatelessWidget {
           child: Text(
             labelText,
             textAlign: TextAlign.left,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.bold,
               color: Colors.black,
@@ -47,7 +47,7 @@ class VistaLogin extends StatelessWidget {
             height: 200, // Adjust the height as needed
             color: const Color.fromARGB(
                 255, 250, 206, 190), // Example color, change as needed
-            child: Center(
+            child: const Center(
               child: Image(
                 image: AssetImage("assets/imagenes/logo.png"),
                 height: 100,
