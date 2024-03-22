@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unimarket/Views/home_view.dart';
 import 'package:unimarket/Views/search_view.dart';
 import 'package:unimarket/nav_bar.dart';
 
@@ -16,7 +17,7 @@ class _BodyViewState extends State<BodyView> {
     Container(
       color: Colors.white,
       alignment: Alignment.center,
-      child: Text('Here goes the home page'),
+      child: const HomeView(),
     ),
 
     Container(

@@ -31,6 +31,7 @@ class ProductDetail_view extends StatelessWidget {
     return Scaffold(
 
       backgroundColor: Colors.grey[100],
+      
 
       appBar: AppBar(
         centerTitle: true,
@@ -40,7 +41,11 @@ class ProductDetail_view extends StatelessWidget {
       ),
 
       body: 
-        Expanded(
+        ListView(
+          scrollDirection: Axis.vertical,
+
+          children: [
+            Expanded(
           child: Column(
             children: [
 
@@ -120,8 +125,7 @@ class ProductDetail_view extends StatelessWidget {
                   ),
               ),
 
-              SizedBox(height: 20,)
-,
+              SizedBox(height: 20,),
               Row(
                 children: [
                   SizedBox(width: 10,),
@@ -221,7 +225,10 @@ class ProductDetail_view extends StatelessWidget {
                 ],
               ),
             ],
-          ),),
+          ),
+        ),
+          ],
+        )
 
     );
   }

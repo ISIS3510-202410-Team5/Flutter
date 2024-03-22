@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unimarket/Views/body_view.dart';
 
 class VistaLogin extends StatelessWidget {
   const VistaLogin({super.key});
@@ -39,6 +40,18 @@ class VistaLogin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    void authenticationProcess(){
+
+      bool existing_user = true;
+
+      // Aquí va el proceso de verificación con Firebase
+
+      if(existing_user){
+        Navigator.push(context, MaterialPageRoute(builder: (context) =>  BodyView()));
+      } 
+    }
+
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 250, 206, 190),
       body: Column(
@@ -87,7 +100,7 @@ class VistaLogin extends StatelessWidget {
                             obscureText: true),
                         const SizedBox(height: 20.0),
                         ElevatedButton(
-                          onPressed: () {},
+                          onPressed: (){authenticationProcess();},
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
                             padding:
