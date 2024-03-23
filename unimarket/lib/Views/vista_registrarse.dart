@@ -1,14 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:unimarket/modelo/auth.dart';
-import 'package:unimarket/Views/body_view.dart';
 
-class VistaLogin extends StatefulWidget {
+class VistaRegistrarse extends StatefulWidget {
   @override
-  EstadoLogin createState() => EstadoLogin();
+  EstadoRegistrarse createState() => EstadoRegistrarse();
 }
 
-class EstadoLogin extends State<VistaLogin> {
+class EstadoRegistrarse extends State<VistaRegistrarse> {
   String email = "";
   String contrasena = "";
   AuthService autenticador = AuthService();
@@ -89,15 +88,6 @@ class EstadoLogin extends State<VistaLogin> {
 
   @override
   Widget build(BuildContext context) {
-    void authenticationProcess(bool existing_user) {
-      // Aquí va el proceso de verificación con Firebase
-
-      if (existing_user) {
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => BodyView()));
-      }
-    }
-
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 250, 206, 190),
       body: Column(
@@ -132,7 +122,7 @@ class EstadoLogin extends State<VistaLogin> {
                         const Padding(
                           padding: EdgeInsets.only(bottom: 35),
                           child: Text(
-                            'Sign in',
+                            'Register',
                             style: TextStyle(
                               fontSize: 36.0,
                               fontWeight: FontWeight.bold,
@@ -147,8 +137,7 @@ class EstadoLogin extends State<VistaLogin> {
                         const SizedBox(height: 20.0),
                         ElevatedButton(
                           onPressed: () async {
-                            authenticationProcess(
-                                await autenticador.ingresar(email, contrasena));
+                            autenticador.registrar(email, contrasena);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
@@ -159,7 +148,7 @@ class EstadoLogin extends State<VistaLogin> {
                             ),
                           ),
                           child: const Text(
-                            'Sign in',
+                            'Register',
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
