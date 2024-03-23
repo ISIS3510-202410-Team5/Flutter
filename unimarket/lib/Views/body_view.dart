@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shake/shake.dart';
 import 'package:unimarket/Views/home_view.dart';
+import 'package:unimarket/Views/publish_view.dart';
 import 'package:unimarket/Views/search_view.dart';
 import 'package:unimarket/nav_bar.dart';
 
@@ -36,7 +37,7 @@ class _BodyViewState extends State<BodyView> {
     Container(
       color: Colors.white,
       alignment: Alignment.center,
-      child: Text('Here goes the publishing page'),
+      child: const PublishView(),
     ),
 
     Container(
@@ -57,6 +58,7 @@ class _BodyViewState extends State<BodyView> {
       child: Text('Here goes the user profile page'),
     )
   ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -76,15 +78,16 @@ class _BodyViewState extends State<BodyView> {
 
   @override
   void initState(){
-    super.initState();
 
     detector = ShakeDetector.autoStart(
       onPhoneShake: (){
         setState(() {
-          this.currentIndex = 3;
+          currentIndex = 3;
         });
       }
     );
+
+    super.initState();
   }
 
   @override
