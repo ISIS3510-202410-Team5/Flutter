@@ -28,7 +28,6 @@ class AuthService {
   ////registrar email y contraseña
   Future registrar(String email, String contrasena) async {
     try {
-      print(email + contrasena);
       UserCredential resultado = await auth.createUserWithEmailAndPassword(
           email: email, password: contrasena);
       User? usuario = resultado.user;

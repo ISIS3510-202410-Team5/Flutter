@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:unimarket/modelo/auth.dart';
 
 class VistaRegistrarse extends StatefulWidget {
+  const VistaRegistrarse({super.key});
   @override
   EstadoRegistrarse createState() => EstadoRegistrarse();
 }
