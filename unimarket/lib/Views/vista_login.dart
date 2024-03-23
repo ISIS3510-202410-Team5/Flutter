@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:unimarket/Views/vista_registrarse.dart';
 import 'package:unimarket/modelo/auth.dart';
 import 'package:unimarket/Views/body_view.dart';
 
@@ -118,7 +119,8 @@ class EstadoLogin extends State<VistaLogin> {
             child: Center(
               child: Container(
                 width: 350,
-                margin: const EdgeInsets.only(bottom: 100),
+                height: 550,
+                // margin: const EdgeInsets.only(bottom: 100),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   color: const Color.fromARGB(255, 255, 100, 35),
@@ -160,6 +162,34 @@ class EstadoLogin extends State<VistaLogin> {
                           ),
                           child: const Text(
                             'Sign in',
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(
+                            height:
+                                20.0), // Add some space between the Sign in button and Register button
+                        ElevatedButton(
+                          onPressed: () {
+                            // Add your registration logic here
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => VistaRegistrarse()));
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orange,
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 40.0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
+                          ),
+                          child: const Text(
+                            'Register',
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
