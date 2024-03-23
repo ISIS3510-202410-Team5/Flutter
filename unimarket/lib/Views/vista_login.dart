@@ -89,9 +89,7 @@ class EstadoLogin extends State<VistaLogin> {
 
   @override
   Widget build(BuildContext context) {
-    void authenticationProcess() {
-      bool existing_user = true;
-
+    void authenticationProcess(bool existing_user) {
       // Aquí va el proceso de verificación con Firebase
 
       if (existing_user) {
@@ -149,10 +147,8 @@ class EstadoLogin extends State<VistaLogin> {
                         const SizedBox(height: 20.0),
                         ElevatedButton(
                           onPressed: () async {
-                            autenticador.ingresar(email, contrasena);
-                          },
-                          onPressed: () {
-                            authenticationProcess();
+                            authenticationProcess(
+                                await autenticador.ingresar(email, contrasena));
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
