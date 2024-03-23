@@ -13,7 +13,10 @@ class NavBar extends StatelessWidget {
       selectedIndex: selectedIndex,
       height: 60,
       onDestinationSelected: onDestinationSelected,
-
+      backgroundColor: Colors.deepOrange[300],
+      shadowColor: Colors.deepOrange,
+      
+      
       // ignore: prefer_const_literals_to_create_immutables
       destinations: [
         

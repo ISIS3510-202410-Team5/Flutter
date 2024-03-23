@@ -17,7 +17,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
+      backgroundColor: Colors.grey[200],
       body: 
         ListView(
           
@@ -26,24 +26,49 @@ class _HomeViewState extends State<HomeView> {
 
             Align(
               alignment: Alignment.center,
-              child: Text("Welcome to Unimarket", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold,),),
+              child: Text("Welcome to Unimarket", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),),
             ),
-            
+
+            Divider(height: 5, thickness:3, indent: 50, endIndent: 50, color: Colors.deepOrange,),
+
             SizedBox(height: 30,),
 
-            SearchBar(
-              leading: Icon(Icons.search, color: Colors.black,),
-              hintText: "Search something...",
-              onTap: () {searchSelection();},
+            TextField(
+              onTap: (){searchSelection();},
+              style: TextStyle(color: Colors.black),
+              textAlign: TextAlign.center,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(60.0),
+                  borderSide: BorderSide.none,
+                ),
+
+                hintText: "Search Products...",
+                prefixIcon: Icon(Icons.search),
+              ),
             ),
 
-            SizedBox(height: 20,),
+            Container(
+              decoration: 
+                BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(18),
+                ),
+              margin: EdgeInsets.all(11.0),
+              child: 
+                Column(
+                  children: [
+                    Row(
+                      children: [
+                        SizedBox(width: 30,),
+                        Text("What are you looking for?", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                      ],),
 
-            Text("What are you looking for?", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+                    Divider(thickness: 3, color: Colors.grey, indent: 30, endIndent: 30,),
 
-            Divider(thickness: 5, color: Colors.grey,),
-
-            SizedBox(height: 40,),
+                    SizedBox(height: 40,),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -164,6 +189,13 @@ class _HomeViewState extends State<HomeView> {
                 
               ],
             ),
+                  SizedBox(height: 20,),
+                  ],
+                ),
+            ),
+            
+
+            
           ],
         ),
     );
