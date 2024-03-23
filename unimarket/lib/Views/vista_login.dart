@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:unimarket/modelo/auth.dart';
+import 'package:unimarket/Views/body_view.dart';
 
 class VistaLogin extends StatefulWidget {
   @override
@@ -88,6 +89,17 @@ class EstadoLogin extends State<VistaLogin> {
 
   @override
   Widget build(BuildContext context) {
+    void authenticationProcess() {
+      bool existing_user = true;
+
+      // Aquí va el proceso de verificación con Firebase
+
+      if (existing_user) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => BodyView()));
+      }
+    }
+
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 250, 206, 190),
       body: Column(
@@ -138,6 +150,9 @@ class EstadoLogin extends State<VistaLogin> {
                         ElevatedButton(
                           onPressed: () async {
                             autenticador.ingresar(email, contrasena);
+                          },
+                          onPressed: () {
+                            authenticationProcess();
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
