@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:unimarket/firebase_options.dart';
 import 'package:unimarket/vistas/vista_home.dart';
 import 'package:unimarket/vistas/vista_login.dart';
+import 'package:unimarket/vistas/vista_registrarse.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,10 +24,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'UniMarket',
       theme: ThemeData(),
-      home: const VistaLogin(),
+      home: VistaLogin(),
       routes: {
         'VistaHome': (context) => const VistaHome(),
-        'VistaLogin': (context) => const VistaLogin(),
       },
     );
   }

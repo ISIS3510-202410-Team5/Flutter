@@ -2,12 +2,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:unimarket/modelo/auth.dart';
 
-class VistaLogin extends StatefulWidget {
+class VistaRegistrarse extends StatefulWidget {
   @override
-  EstadoLogin createState() => EstadoLogin();
+  EstadoRegistrarse createState() => EstadoRegistrarse();
 }
 
-class EstadoLogin extends State<VistaLogin> {
+class EstadoRegistrarse extends State<VistaRegistrarse> {
   String email = "";
   String contrasena = "";
   AuthService autenticador = AuthService();
@@ -122,7 +122,7 @@ class EstadoLogin extends State<VistaLogin> {
                         const Padding(
                           padding: EdgeInsets.only(bottom: 35),
                           child: Text(
-                            'Sign in',
+                            'Register',
                             style: TextStyle(
                               fontSize: 36.0,
                               fontWeight: FontWeight.bold,
@@ -137,7 +137,7 @@ class EstadoLogin extends State<VistaLogin> {
                         const SizedBox(height: 20.0),
                         ElevatedButton(
                           onPressed: () async {
-                            autenticador.ingresar(email, contrasena);
+                            autenticador.registrar(email, contrasena);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
@@ -148,7 +148,7 @@ class EstadoLogin extends State<VistaLogin> {
                             ),
                           ),
                           child: const Text(
-                            'Sign in',
+                            'Register',
                             style: TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
