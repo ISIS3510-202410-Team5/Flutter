@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:unimarket/Views/home_view.dart';
 import 'package:unimarket/Views/vista_registrarse.dart';
 import 'package:unimarket/modelo/auth.dart';
 import 'package:unimarket/Views/body_view.dart';
@@ -13,6 +14,7 @@ class EstadoLogin extends State<VistaLogin> {
   String email = "";
   String contrasena = "";
   AuthService autenticador = AuthService();
+
 //hace parte del scaffold. ignorar para otras cosas
   Widget _buildTextField(String labelText, String hintText,
       {bool obscureText = false}) {
@@ -88,6 +90,29 @@ class EstadoLogin extends State<VistaLogin> {
     );
   }
 
+  void showErrorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.red, // Set background color to red
+          title: Text('Oops!'),
+          content: Text(
+              'Something went wrong singing in. Make sure the credentials you are providing are correct and that you already have an account registered'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                // Close the dialog
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     void authenticationProcess(bool existing_user) {
@@ -96,6 +121,8 @@ class EstadoLogin extends State<VistaLogin> {
       if (existing_user) {
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => BodyView()));
+      } else {
+        showErrorDialog(context);
       }
     }
 

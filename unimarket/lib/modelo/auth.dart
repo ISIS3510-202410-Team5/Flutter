@@ -31,11 +31,12 @@ class AuthService {
       UserCredential resultado = await auth.createUserWithEmailAndPassword(
           email: email, password: contrasena);
       User? usuario = resultado.user;
-      print("Tipo UserCredential  " + resultado.toString());
-      print("Tipo User  " + usuario.toString());
+      return usuario;
+      // print("Tipo UserCredential  " + resultado.toString());
+      // print("Tipo User  " + usuario.toString());
     } catch (e) {
       print(e.toString());
-      return null;
+      // rethrow;
     }
   }
 }
