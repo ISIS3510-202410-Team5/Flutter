@@ -15,6 +15,7 @@ class BodyView extends StatefulWidget {
 
 class _BodyViewState extends State<BodyView> {
   int currentIndex = 0;
+  
   var pageViewList = [
     Container(
       color: Colors.white,

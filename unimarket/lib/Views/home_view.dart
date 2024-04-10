@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:unimarket/Views/search_view.dart';
+import 'package:flutter/services.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
 
   @override
   State<HomeView> createState() => _HomeViewState();
+  
 }
 
 class _HomeViewState extends State<HomeView> {
@@ -14,9 +16,11 @@ class _HomeViewState extends State<HomeView> {
     Navigator.push(context, MaterialPageRoute(builder: (context) =>  SearchView()));
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: Colors.grey[200],
       body: 
         ListView(

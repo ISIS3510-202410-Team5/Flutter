@@ -166,6 +166,7 @@ class _SearchViewState extends State<SearchView> {
             ),
             SizedBox(height: 7.0),
             Expanded(
+              
               child: GridView.builder(
                 itemCount: display_list.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -176,9 +177,12 @@ class _SearchViewState extends State<SearchView> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(30),
+                        
                       ),
+                      height: 500,
                       child: Expanded(
                           child: Column(
+                        
                         children: [
                           TextButton(
                               onPressed: () {
@@ -204,7 +208,7 @@ class _SearchViewState extends State<SearchView> {
                           SizedBox(height: 6.0),
                           Image.network(
                             display_list[index].product_image!,
-                            height: 90,
+                            height: 77,
                             width: 70,
                           ),
                           Text("Price: ${display_list[index].product_price!}",
@@ -249,7 +253,7 @@ class _SearchViewState extends State<SearchView> {
                   contentPadding: EdgeInsets.all(8.0),
                   title: Column(children: [
                     Container(
-                      height: 200,
+                      height: 220,
                       width: 150,
                       decoration: BoxDecoration(
                         color: Colors.white,
@@ -294,7 +298,7 @@ class _SearchViewState extends State<SearchView> {
                   ]),
                 ),
               ),
-            ),
+            )
           ],
         ),
       ),
