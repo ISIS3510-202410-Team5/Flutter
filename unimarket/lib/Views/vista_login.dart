@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:unimarket/Views/home_view.dart';
 import 'package:unimarket/Views/vista_registrarse.dart';
 import 'package:unimarket/modelo/auth.dart';
 import 'package:unimarket/Views/body_view.dart';
