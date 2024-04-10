@@ -14,6 +14,9 @@ class AuthService {
 
 //iniciari sesión con email y contraseña
   Future ingresar(String email, String password) async {
+    if (!isValidEmail(email)) {
+      return false;
+    }
     try {
       UserCredential result = await auth.signInWithEmailAndPassword(
           email: email, password: password);
@@ -23,6 +26,17 @@ class AuthService {
       print(error.toString());
       return false;
     }
+  }
+
+  bool isValidEmail(String email) {
+    // Regular expression for validating an email address
+    final RegExp emailRegex = RegExp(
+      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+      caseSensitive: false,
+      multiLine: false,
+    );
+
+    return emailRegex.hasMatch(email);
   }
 
   ////registrar email y contraseña

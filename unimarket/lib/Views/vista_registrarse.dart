@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:unimarket/Views/vista_login.dart';
 import 'package:unimarket/modelo/auth.dart';
 
 class VistaRegistrarse extends StatefulWidget {
@@ -91,6 +92,18 @@ class EstadoRegistrarse extends State<VistaRegistrarse> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 250, 206, 190),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => VistaLogin()));
+          },
+        ),
+        backgroundColor:
+            Colors.transparent, // Para hacer transparente la AppBar
+        elevation: 0, // Para eliminar la sombra debajo de la AppBar
+      ),
       body: Column(
         children: [
           Container(
