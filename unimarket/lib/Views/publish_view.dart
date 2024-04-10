@@ -1,26 +1,6 @@
-import 'package:camera/camera.dart';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-
-late List<CameraDescription> cameras;
-
-Future<void> main() async{
-  WidgetsFlutterBinding.ensureInitialized();
-  cameras = await availableCameras();
-  runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: CameraApp(),
-    );
-  }
-}
-
-
 
 class PublishView extends StatefulWidget {
   const PublishView({super.key});
@@ -30,6 +10,8 @@ class PublishView extends StatefulWidget {
 }
 
 class _PublishViewState extends State<PublishView> {
+  Uint8List? image;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,87 +19,73 @@ class _PublishViewState extends State<PublishView> {
       appBar: AppBar(
         centerTitle: true,
         backgroundColor: Colors.white,
-        automaticallyImplyLeading: false,
-        title: 
-          Column(
+        title: Column(
             children: [
               Text("Publish a New Product", style: TextStyle(color: Colors.black, fontSize: 22.0, fontWeight: FontWeight.bold)),
               Divider(height: 5, thickness:3, indent: 50, endIndent: 50, color: Colors.deepOrange,),
-              MyApp()
+              
             ],
-          )
-      ),
+      ),),
+      body: Center(
+        child: Stack(
+          children: [
+            image != null?
+            CircleAvatar(
+              radius: 100,
+              backgroundImage: NetworkImage("https://cdn4.iconfinder.com/data/icons/documents-36/25/add-picture-512.png")
+            ,) :
+            CircleAvatar(
+              radius: 100,
+              backgroundImage: NetworkImage("https://cdn4.iconfinder.com/data/icons/documents-36/25/add-picture-512.png")
+            ,),
+            Positioned(
+              bottom:-10,
+              left: 140,
+              child: IconButton(onPressed: (){showImagePickerOption(context);}, icon: Icon(Icons.add_a_photo))
+            )
+          ],
+        ),
+      )
     );
   }
-}
 
+  void showImagePickerOption(BuildContext context){
+    showModalBottomSheet(backgroundColor: Colors.deepOrange[200], context: context, builder: (builder){
+      return SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        child: Row(
+          children: [
+            Expanded(
+              child: InkWell(
+                onTap: (){},
+                child: SizedBox(
+                  child: Column(
+                    children: [
+                      Icon(Icons.image),
+                      Text("Gallery"),
+                    ]
+                  ),
+                )
+              ),
+            ),
 
-class CameraApp extends StatefulWidget {
-  const CameraApp({super.key});
-
-  @override
-  State<CameraApp> createState() => _CameraAppState();
-}
-
-class _CameraAppState extends State<CameraApp> {
-  late CameraController _controller;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    _controller = CameraController(cameras[0], ResolutionPreset.max);
-    _controller.initialize().then((_) {
-      if(!mounted){
-        return;
-      }
-      setState(() {
-        
-      });
-    }).catchError((Object e) {
-      if(e is CameraException){
-        switch (e.code){
-          case 'CameraAccessDenied':
-            print('Access was denied');
-            break;
-          default:
-            print(e.description);
-            break;
-        }
-      }
+            Expanded(
+              child: InkWell(
+                onTap: (){},
+                child: SizedBox(
+                  child: Column(
+                    children: [
+                      Icon(Icons.camera),
+                      Text("Camera"),
+                    ]
+                  ),
+                )
+              ),
+            ),
+          ],
+        ),
+      );
     });
-  }
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-
-      body: Stack(
-        children: [
-          Container(
-            height: double.infinity,
-            child: CameraPreview(_controller),
-          ),
-
-          RawMaterialButton(
-            onPressed: () async{
-              if(!_controller.value.isInitialized){
-                return null;
-              }
-              if(_controller.value.isTakingPicture){
-                return null;
-              }
-              try{
-                await _controller.setFlashMode(FlashMode.auto);
-                XFile picture = await _controller.takePicture();
-              } on CameraException catch (e){
-                debugPrint("Error occured while taking picture: $e");
-                return null;
-              }
-            },
-            child: Text("Take picture"),
-           )
-        ],
-      ),
-    );
   }
 }
