@@ -14,9 +14,6 @@ class AuthService {
 
 //iniciari sesión con email y contraseña
   Future ingresar(String email, String password) async {
-    if (!isValidEmail(email)) {
-      return false;
-    }
     try {
       UserCredential result = await auth.signInWithEmailAndPassword(
           email: email, password: password);
@@ -28,28 +25,18 @@ class AuthService {
     }
   }
 
-  bool isValidEmail(String email) {
-    // Regular expression for validating an email address
-    final RegExp emailRegex = RegExp(
-      r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-      caseSensitive: false,
-      multiLine: false,
-    );
-
-    return emailRegex.hasMatch(email);
-  }
-
   ////registrar email y contraseña
   Future registrar(String email, String contrasena) async {
     try {
       UserCredential resultado = await auth.createUserWithEmailAndPassword(
           email: email, password: contrasena);
       User? usuario = resultado.user;
-      print("Tipo UserCredential  " + resultado.toString());
-      print("Tipo User  " + usuario.toString());
+      return usuario;
+      // print("Tipo UserCredential  " + resultado.toString());
+      // print("Tipo User  " + usuario.toString());
     } catch (e) {
       print(e.toString());
-      return null;
+      // rethrow;
     }
   }
 }

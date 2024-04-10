@@ -13,6 +13,56 @@ class EstadoRegistrarse extends State<VistaRegistrarse> {
   String email = "";
   String contrasena = "";
   AuthService autenticador = AuthService();
+  late bool registroExitoso;
+
+  void manejarRegistro() {}
+
+  void showErrorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.red, // Set background color to red
+          title: Text('Oops!'),
+          content: Text(
+              'Something went wrong registering your user. Make sure you are using a valid email format. Make sure your password is at least 6 characters long. Make sure your email is not associated with an existing account'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                // Close the dialog
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showSuccessDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.green, // Set background color to green
+          title: Text('Success!'),
+          content: Text('Registration successful! Now please sign in'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                // Close the dialog
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => VistaLogin()));
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 //hace parte del scaffold. ignorar para otras cosas
   Widget _buildTextField(String labelText, String hintText,
       {bool obscureText = false}) {
@@ -151,7 +201,20 @@ class EstadoRegistrarse extends State<VistaRegistrarse> {
                         const SizedBox(height: 20.0),
                         ElevatedButton(
                           onPressed: () async {
-                            autenticador.registrar(email, contrasena);
+                            // try {
+                            autenticador.registrar(email, contrasena).then(
+                                (value) => value == null
+                                    ? showErrorDialog(context)
+                                    : showSuccessDialog(context));
+                            // } catch (e) {
+                            //   print(e.toString() + "9999999999999999999999");
+                            //   showErrorDialog(context);
+                            // }
+
+                            // print(registroExitoso);
+                            // registroExitoso
+                            //     ? showErrorDialog(context)
+                            // showErrorDialog(context);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
