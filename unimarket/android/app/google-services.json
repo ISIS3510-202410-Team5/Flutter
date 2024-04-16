@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "229477297961",
-    "project_id": "unimarket-app-da613",
-    "storage_bucket": "unimarket-app-da613.appspot.com"
+    "project_number": "120994639030",
+    "project_id": "unimarket-174b9",
+    "storage_bucket": "unimarket-174b9.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:229477297961:android:96d49e9a0bdd87cac89138",
+        "mobilesdk_app_id": "1:120994639030:android:db2685d2e9bd1bc7f54a17",
         "android_client_info": {
           "package_name": "com.example.unimarket"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCKiHT3YEpegBoj11NEH6kuxe9VJtxfFLU"
+          "current_key": "AIzaSyBZkOQ6Fx6qjM8PW0lvkUZ36hK4bsbUYLc"
         }
       ],
       "services": {
