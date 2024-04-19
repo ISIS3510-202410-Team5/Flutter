@@ -27,10 +27,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.macOS:
         return macos;
       case TargetPlatform.windows:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for windows - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return windows;
       case TargetPlatform.linux:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for linux - '
@@ -72,10 +69,21 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions macos = FirebaseOptions(
     apiKey: 'AIzaSyDMRyMoi7ycGbVxdM0EPQOyogaR4ADfkV0',
-    appId: '1:120994639030:ios:fff7f5907b880aaff54a17',
+    appId: '1:120994639030:ios:6366745fb1029ffff54a17',
     messagingSenderId: '120994639030',
     projectId: 'unimarket-174b9',
     storageBucket: 'unimarket-174b9.appspot.com',
-    iosBundleId: 'com.example.unimarket.RunnerTests',
+    iosBundleId: 'com.example.unimarket',
   );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyDVap1T0yeBpP3yvqlDwSHCToFo4dcgbCk',
+    appId: '1:120994639030:web:7c1c11b85e2ef232f54a17',
+    messagingSenderId: '120994639030',
+    projectId: 'unimarket-174b9',
+    authDomain: 'unimarket-174b9.firebaseapp.com',
+    storageBucket: 'unimarket-174b9.appspot.com',
+    measurementId: 'G-GBCKP9TMG9',
+  );
+
 }
