@@ -44,38 +44,38 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyBANNaakvIAsXRLErUxaBhe6_KzAW_39X4',
-    appId: '1:229477297961:web:520fafde45d27198c89138',
-    messagingSenderId: '229477297961',
-    projectId: 'unimarket-app-da613',
-    authDomain: 'unimarket-app-da613.firebaseapp.com',
-    storageBucket: 'unimarket-app-da613.appspot.com',
-    measurementId: 'G-77VLLH9QLT',
+    apiKey: 'AIzaSyDVap1T0yeBpP3yvqlDwSHCToFo4dcgbCk',
+    appId: '1:120994639030:web:37fac20093bf1caaf54a17',
+    messagingSenderId: '120994639030',
+    projectId: 'unimarket-174b9',
+    authDomain: 'unimarket-174b9.firebaseapp.com',
+    storageBucket: 'unimarket-174b9.appspot.com',
+    measurementId: 'G-1JMT4BY8KQ',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCKiHT3YEpegBoj11NEH6kuxe9VJtxfFLU',
-    appId: '1:229477297961:android:96d49e9a0bdd87cac89138',
-    messagingSenderId: '229477297961',
-    projectId: 'unimarket-app-da613',
-    storageBucket: 'unimarket-app-da613.appspot.com',
+    apiKey: 'AIzaSyBZkOQ6Fx6qjM8PW0lvkUZ36hK4bsbUYLc',
+    appId: '1:120994639030:android:db2685d2e9bd1bc7f54a17',
+    messagingSenderId: '120994639030',
+    projectId: 'unimarket-174b9',
+    storageBucket: 'unimarket-174b9.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCxlesat_ogQMMpll6IFcqs253loadj2IQ',
-    appId: '1:229477297961:ios:fa829c084979575ec89138',
-    messagingSenderId: '229477297961',
-    projectId: 'unimarket-app-da613',
-    storageBucket: 'unimarket-app-da613.appspot.com',
+    apiKey: 'AIzaSyDMRyMoi7ycGbVxdM0EPQOyogaR4ADfkV0',
+    appId: '1:120994639030:ios:6366745fb1029ffff54a17',
+    messagingSenderId: '120994639030',
+    projectId: 'unimarket-174b9',
+    storageBucket: 'unimarket-174b9.appspot.com',
     iosBundleId: 'com.example.unimarket',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCxlesat_ogQMMpll6IFcqs253loadj2IQ',
-    appId: '1:229477297961:ios:d7bda61b54e75838c89138',
-    messagingSenderId: '229477297961',
-    projectId: 'unimarket-app-da613',
-    storageBucket: 'unimarket-app-da613.appspot.com',
+    apiKey: 'AIzaSyDMRyMoi7ycGbVxdM0EPQOyogaR4ADfkV0',
+    appId: '1:120994639030:ios:fff7f5907b880aaff54a17',
+    messagingSenderId: '120994639030',
+    projectId: 'unimarket-174b9',
+    storageBucket: 'unimarket-174b9.appspot.com',
     iosBundleId: 'com.example.unimarket.RunnerTests',
   );
 }

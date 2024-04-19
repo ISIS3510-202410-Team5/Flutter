@@ -135,7 +135,10 @@ class ProductDetail_view extends StatelessWidget {
                                     Text("Product Use", style: TextStyle(fontWeight: FontWeight.bold), textAlign: TextAlign.left,)
                                 ),
                                 Divider(color: Colors.orange[700], height: 5, thickness: 2.0,endIndent: 85,),
+                                
+                                
                                 Text(product.product_use!),
+
                                 SizedBox(height: 10,),
 
                                 Divider(color: Colors.grey[100], height: 8, thickness: 2,),

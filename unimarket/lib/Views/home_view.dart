@@ -57,8 +57,6 @@ class _HomeViewState extends State<HomeView> {
       }
     });
     setState(() => usuariosN = usuarios[0]["regUsers"]);
-    print(usuarios[0] +
-        "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
   }
 
   // int contarProductos() {
@@ -99,8 +97,74 @@ class _HomeViewState extends State<HomeView> {
             color: Colors.deepOrange,
           ),
           SizedBox(
-            height: 30,
+            height: 15,
           ),
+
+Container(
+            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.deepOrange,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Number of users:",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                // Replace the value of usersCount with your variable
+                Text(
+                  usuariosN.toString(),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            padding: EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.deepOrange,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Number of products:",
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                // Replace the value of productsCount with your variable
+                Text(
+                  numProds.toString(),
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          SizedBox(
+            height: 15,
+          ),
+
           TextField(
             onTap: () {
               searchSelection();
@@ -293,66 +357,7 @@ class _HomeViewState extends State<HomeView> {
               ],
             ),
           ),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.deepOrange,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Number of users:",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-                // Replace the value of usersCount with your variable
-                Text(
-                  usuariosN.toString(),
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            padding: EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: Colors.deepOrange,
-              borderRadius: BorderRadius.circular(10),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Number of products:",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-                // Replace the value of productsCount with your variable
-                Text(
-                  numProds.toString(),
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ],
-            ),
-          ),
+          
         ],
       ),
     );

@@ -12,7 +12,7 @@ class AuthService {
     return user != null ? Usuario(usuarioId: user.uid) : null;
   }
 
-//iniciari sesión con email y contraseña
+//iniciar sesión con email y contraseña
   Future ingresar(String email, String password) async {
     try {
       UserCredential result = await auth.signInWithEmailAndPassword(
