@@ -14,16 +14,18 @@ class ChatView extends StatefulWidget {
 class _ChatViewState extends State<ChatView> {
   Uint8List? image;
   late ProductGetController control;
-  static  control = ProductGetController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Button Example'),
+      appBar: AppBar(
+        title: Text('Under Construction'),
+      ),
+      body: Center(
+        child: Text(
+          'This area is under construction.',
+          style: TextStyle(fontSize: 20.0),
         ),
-        body: ElevatedButton(
-          onPressed: () => control.addProductToCatalog(),
-          child: Text('Press Me'),
-        ));
+      ),
+    );
   }
 }

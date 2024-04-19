@@ -1,12 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Producto {
-  final String coverUrl;
-  final String? id;
-  final String latitud;
-  final String longitud;
-  final String precio;
-  final String title;
+  int? product_id;
+  String? product_name;
+  String? product_category;
+  int? product_price;
+  String? product_use;
+  String? product_image;
+  int product_views = 0;
 
   const Producto(
       {required this.coverUrl,
