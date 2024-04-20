@@ -14,5 +14,13 @@ class ProductModel{
   String? product_description;
   int product_views = 0;
 
-  ProductModel(this.product_name, this.product_category, this.product_price, this.product_use, this.product_image, this.product_description, this.product_views);
+  ProductModel(
+    this.product_name, 
+    this.product_category, 
+    this.product_price, 
+    this.product_use, 
+    this.product_image, 
+    this.product_description, 
+    this.product_views
+  );
 }

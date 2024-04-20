@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:unimarket/Controllers/publish_controller.dart';
-import 'package:unimarket/Model/product_model.dart';
+import 'package:unimarket/Models/product_model.dart';
 
 
 enum ColorLabel {
@@ -51,8 +51,6 @@ class _PublishViewState extends State<PublishView> {
 
   //For the controller
   late PublishController _publishController;
-
-  //For
   
 
   @override
@@ -282,9 +280,9 @@ class _PublishViewState extends State<PublishView> {
                           style: const ButtonStyle(
                             backgroundColor: MaterialStatePropertyAll<Color>(Colors.deepOrange),
                           ),
-                          onPressed: (){
+                          onPressed: () async {
                             ProductModel producto = ProductModel(_publishController.controllerName.text, _publishController.iconController.text, int.parse(_publishController.controllerPrice.text), _publishController.useController.text, _publishController.controllerDescription.text, _publishController.controllerDescription.text, 0);
-                            _publishController.addProductToCatalog(producto);
+                            await _publishController.addProductToCatalog(producto, selectedImage!);
                           }, 
                           child: const Text('Publish product', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),))
                       ]),

@@ -3,15 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:unimarket/Views/body_view.dart';
 import 'package:unimarket/Views/home_view.dart';
 import 'package:unimarket/Views/publish_view.dart';
-import 'package:unimarket/Views/vista_login.dart';
+import 'package:unimarket/Views/login_view.dart';
 import 'package:unimarket/firebase_options.dart';
-import 'package:unimarket/Views/vista_login.dart';
-import 'package:unimarket/Views/vista_registrarse.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/services.dart';
-
-import 'package:firebase_core/firebase_core.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,9 +27,9 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         
       ),
-      //home: VistaLogin(),
+      home: const LoginView(),
       //home: HomeView(),
-      home: PublishView(),
+      //home: PublishView(),
     );
   }
 }
