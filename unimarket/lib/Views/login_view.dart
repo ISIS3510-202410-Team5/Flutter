@@ -1,21 +1,29 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:unimarket/Views/home_view.dart';
-import 'package:unimarket/Views/vista_registrarse.dart';
-import 'package:unimarket/modelo/auth.dart';
+import 'package:unimarket/Controllers/auth_controller.dart';
+import 'package:unimarket/Views/register_view.dart';
 import 'package:unimarket/Views/body_view.dart';
 
-class VistaLogin extends StatefulWidget {
+
+class LoginView extends StatefulWidget {
+  const LoginView({super.key});
+
   @override
-  EstadoLogin createState() => EstadoLogin();
+  State<LoginView> createState() => _LoginViewState();
 }
 
-class EstadoLogin extends State<VistaLogin> {
+class _LoginViewState extends State<LoginView> {
+
+  late AuthController _authController;
+
   String email = "";
   String contrasena = "";
-  AuthService autenticador = AuthService();
+  
+  @override
+  void initState(){
+    _authController = AuthController();
+    super.initState();
+  }
 
-//hace parte del scaffold. ignorar para otras cosas
   Widget _buildTextField(String labelText, String hintText,
       {bool obscureText = false}) {
     return Column(
@@ -96,8 +104,8 @@ class EstadoLogin extends State<VistaLogin> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Colors.red, // Set background color to red
-          title: Text('Oops!'),
-          content: Text(
+          title: const Text('Oops!'),
+          content: const Text(
               'Something went wrong singing in. Make sure the credentials you are providing are correct and that you already have an account registered'),
           actions: <Widget>[
             TextButton(
@@ -105,7 +113,7 @@ class EstadoLogin extends State<VistaLogin> {
                 // Close the dialog
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );
@@ -115,12 +123,13 @@ class EstadoLogin extends State<VistaLogin> {
 
   @override
   Widget build(BuildContext context) {
-    void authenticationProcess(bool existing_user) {
+
+    void authenticationProcess(bool existingUser) {
       // Aquí va el proceso de verificación con Firebase
 
-      if (existing_user) {
+      if (existingUser) {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => BodyView()));
+            context, MaterialPageRoute(builder: (context) => const BodyView()));
       } else {
         showErrorDialog(context);
       }
@@ -176,8 +185,7 @@ class EstadoLogin extends State<VistaLogin> {
                         const SizedBox(height: 20.0),
                         ElevatedButton(
                           onPressed: () async {
-                            authenticationProcess(
-                                await autenticador.ingresar(email, contrasena));
+                            authenticationProcess(await _authController.ingresar(email, contrasena));
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
@@ -205,7 +213,7 @@ class EstadoLogin extends State<VistaLogin> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => VistaRegistrarse()));
+                                    builder: (context) => const RegisterView()));
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.orange,
@@ -236,3 +244,4 @@ class EstadoLogin extends State<VistaLogin> {
     );
   }
 }
+

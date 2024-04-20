@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:unimarket/Controllers/home_controller.dart';
 import 'package:unimarket/Views/search_view.dart';
-import 'package:unimarket/modelo/productos.dart';
-import 'package:flutter/services.dart';
+
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -12,28 +12,26 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+
+  late HomeController _homeController;
+
   @override
   void initState() {
     // Note that you cannot use `async await` in  initState
     getData();
     getData1();
+    _homeController = HomeController();
     super.initState();
   }
 
-  final _DB = FirebaseFirestore.instance;
+  final db = FirebaseFirestore.instance;
 
   int numProds = 0;
   int usuariosN = 0;
+
   void searchSelection() {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => SearchView()));
-  }
-
-  Future<List<Producto>> productos() async {
-    final snapshot = await _DB.collection("productos").get();
-
-    final prods = snapshot.docs.map((e) => Producto.fromSnapshot(e)).toList();
-    return prods;
+        context, MaterialPageRoute(builder: (context) => const SearchView()));
   }
 
   List data = [];
@@ -79,30 +77,33 @@ class _HomeViewState extends State<HomeView> {
       backgroundColor: Colors.grey[200],
       body: ListView(
         children: [
-          SizedBox(
+          const SizedBox(
             height: 20,
           ),
-          Align(
+
+          const Align(
             alignment: Alignment.center,
             child: Text(
               "Welcome to Unimarket",
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ),
-          Divider(
+
+          const Divider(
             height: 5,
             thickness: 3,
             indent: 50,
             endIndent: 50,
             color: Colors.deepOrange,
           ),
-          SizedBox(
+
+          const SizedBox(
             height: 15,
           ),
 
-Container(
-            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            padding: EdgeInsets.all(10),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: Colors.deepOrange,
               borderRadius: BorderRadius.circular(10),
@@ -110,7 +111,7 @@ Container(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   "Number of users:",
                   style: TextStyle(
                     color: Colors.white,
@@ -121,7 +122,7 @@ Container(
                 // Replace the value of usersCount with your variable
                 Text(
                   usuariosN.toString(),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -130,9 +131,10 @@ Container(
               ],
             ),
           ),
+
           Container(
-            margin: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            padding: EdgeInsets.all(10),
+            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: Colors.deepOrange,
               borderRadius: BorderRadius.circular(10),
@@ -140,7 +142,7 @@ Container(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   "Number of products:",
                   style: TextStyle(
                     color: Colors.white,
@@ -151,7 +153,7 @@ Container(
                 // Replace the value of productsCount with your variable
                 Text(
                   numProds.toString(),
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
@@ -161,7 +163,7 @@ Container(
             ),
           ),
 
-          SizedBox(
+          const SizedBox(
             height: 15,
           ),
 
@@ -170,7 +172,7 @@ Container(
               searchSelection();
               getData();
             },
-            style: TextStyle(color: Colors.black),
+            style: const TextStyle(color: Colors.black),
             textAlign: TextAlign.center,
             decoration: InputDecoration(
               filled: true,
@@ -180,7 +182,7 @@ Container(
                 borderSide: BorderSide.none,
               ),
               hintText: "Search Products...",
-              prefixIcon: Icon(Icons.search),
+              prefixIcon: const Icon(Icons.search),
             ),
           ),
           Container(
@@ -188,10 +190,10 @@ Container(
               color: Colors.white,
               borderRadius: BorderRadius.circular(18),
             ),
-            margin: EdgeInsets.all(11.0),
+            margin: const EdgeInsets.all(11.0),
             child: Column(
               children: [
-                Row(
+                const Row(
                   children: [
                     SizedBox(
                       width: 30,
@@ -203,15 +205,17 @@ Container(
                     ),
                   ],
                 ),
-                Divider(
+                const Divider(
                   thickness: 3,
                   color: Colors.grey,
                   indent: 30,
                   endIndent: 30,
                 ),
-                SizedBox(
+
+                const SizedBox(
                   height: 40,
                 ),
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -224,7 +228,7 @@ Container(
                             border:
                                 Border.all(color: Colors.deepOrange, width: 5),
                           ),
-                          child: Column(
+                          child: const Column(
                             children: [
                               Icon(
                                 Icons.format_paint,
@@ -233,13 +237,13 @@ Container(
                             ],
                           ),
                         ),
-                        Text(
+                        const Text(
                           "Art Materials",
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 100,
                     ),
                     Column(
@@ -251,7 +255,7 @@ Container(
                             border:
                                 Border.all(color: Colors.deepOrange, width: 5),
                           ),
-                          child: Column(
+                          child: const Column(
                             children: [
                               Icon(
                                 Icons.camera_rounded,
@@ -260,13 +264,13 @@ Container(
                             ],
                           ),
                         ),
-                        Text("Audiovisuals",
+                        const Text("Audiovisuals",
                             style: TextStyle(fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 60,
                 ),
                 Row(
@@ -281,7 +285,7 @@ Container(
                             border:
                                 Border.all(color: Colors.deepOrange, width: 5),
                           ),
-                          child: Column(
+                          child: const Column(
                             children: [
                               Icon(
                                 Icons.security_rounded,
@@ -290,11 +294,11 @@ Container(
                             ],
                           ),
                         ),
-                        Text("Security",
+                        const Text("Security",
                             style: TextStyle(fontWeight: FontWeight.bold)),
                       ],
                     ),
-                    SizedBox(
+                    const SizedBox(
                       width: 100,
                     ),
                     Column(
@@ -306,7 +310,7 @@ Container(
                             border:
                                 Border.all(color: Colors.deepOrange, width: 5),
                           ),
-                          child: Column(
+                          child: const Column(
                             children: [
                               Icon(
                                 Icons.book,
@@ -315,13 +319,13 @@ Container(
                             ],
                           ),
                         ),
-                        Text("Books",
+                        const Text("Books",
                             style: TextStyle(fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 60,
                 ),
                 Row(
@@ -336,7 +340,7 @@ Container(
                             border:
                                 Border.all(color: Colors.deepOrange, width: 5),
                           ),
-                          child: Column(
+                          child: const Column(
                             children: [
                               Icon(
                                 Icons.computer_rounded,
@@ -345,13 +349,13 @@ Container(
                             ],
                           ),
                         ),
-                        Text("Hardware",
+                        const Text("Hardware",
                             style: TextStyle(fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 20,
                 ),
               ],

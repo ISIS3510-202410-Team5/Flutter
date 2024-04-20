@@ -1,15 +1,16 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:unimarket/modelo/usuario.dart';
-import 'dart:developer' as dev;
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:unimarket/Models/user_model.dart';
 
-class AuthService {
+
+class AuthController extends ChangeNotifier{
+
   final FirebaseAuth auth = FirebaseAuth.instance;
 
 // crear usuario a partir del firebaseuser
-  Usuario? usuarioFireBase(User user) {
+  UserModel? usuarioFireBase(User user) {
     // ignore: unnecessary_null_comparison
-    return user != null ? Usuario(usuarioId: user.uid) : null;
+    return user != null ? UserModel(usuarioId: user.uid) : null;
   }
 
 //iniciar sesión con email y contraseña

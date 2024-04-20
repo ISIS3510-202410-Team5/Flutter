@@ -1,32 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:unimarket/Model/product_model.dart';
+import 'package:unimarket/Controllers/productDetail_controller.dart';
+import 'package:unimarket/Models/product_model.dart';
 
 
-class ProductDetail{
-
-  late ProductModel product;
-  late StatelessWidget view;
-
-  ProductDetail(ProductModel prod){
-    product = prod;
-    view = ProductDetail_view(product);
-  }
-}
-
-class ProductDetail_view extends StatelessWidget {
+class ProductDetailView extends StatelessWidget {
   
   late final ProductModel product;
 
-  ProductDetail_view(ProductModel prod){
+  ProductDetailView(ProductModel prod){
     product=prod;
   }
 
   @override
   Widget build(BuildContext context) {
 
-    void addProductToCart(){
-
-    }
+    late ProductDetailController _productDetailController = ProductDetailController();
 
     return Scaffold(
 
@@ -274,7 +262,7 @@ class ProductDetail_view extends StatelessWidget {
                             ),
                             SizedBox(height: 10,),
 
-                            ElevatedButton(onPressed: (){addProductToCart();}, child: const Text('Add to Cart', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),), style: ButtonStyle(backgroundColor: MaterialStateColor.resolveWith((states) => Colors.deepOrange)),),
+                            ElevatedButton(onPressed: (){_productDetailController.addProductToCart();}, child: const Text('Add to Cart', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black),), style: ButtonStyle(backgroundColor: MaterialStateColor.resolveWith((states) => Colors.deepOrange)),),
                         ],
                       )
                     ),
