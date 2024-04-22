@@ -15,7 +15,6 @@ class PublishController extends ChangeNotifier{
   final TextEditingController controllerPrice = TextEditingController();
   final TextEditingController controllerDescription = TextEditingController();
   
-
   Future addProductToCatalog(ProductModel product, File image) async {
 
     var imageName = DateTime.now().millisecondsSinceEpoch.toString();
