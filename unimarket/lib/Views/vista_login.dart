@@ -1,8 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:unimarket/Controllers/Controller.dart';
 import 'package:unimarket/Views/home_view.dart';
 import 'package:unimarket/Views/vista_registrarse.dart';
-import 'package:unimarket/modelo/auth.dart';
+import 'package:unimarket/Controllers/auth.dart';
 import 'package:unimarket/Views/body_view.dart';
 
 class VistaLogin extends StatefulWidget {
@@ -119,6 +120,7 @@ class EstadoLogin extends State<VistaLogin> {
       // Aquí va el proceso de verificación con Firebase
 
       if (existing_user) {
+        Controller().cargarProductos();
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => BodyView()));
       } else {

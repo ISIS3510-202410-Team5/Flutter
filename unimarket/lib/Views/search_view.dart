@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:unimarket/Controllers/Controller.dart';
+import 'package:unimarket/Model/model.dart';
 import 'package:unimarket/Model/product_model.dart';
 import 'package:unimarket/Views/productDetail_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -12,35 +14,32 @@ class SearchView extends StatefulWidget {
 }
 
 class _SearchViewState extends State<SearchView> {
-  //productos de la base ded datos
-  Future<int> productos =
-      FirebaseFirestore.instance.collection('productos').snapshots().length;
+  List<ProductModel> products_list = Controller().getProducts();
 
-  static List<ProductModel> trending_products_list = products_list;
+  late List<ProductModel> trending_products_list = products_list;
 
-  List<ProductModel> display_list = List.from(products_list);
-  List<ProductModel> trend_list = products_list.sublist(0, 5);
+  late List<ProductModel> display_list = List.from(products_list);
+  late List<ProductModel> trend_list = products_list.sublist(0, 5);
 
   void updateList(String value) {
     setState(() {
       display_list = products_list
           .where((element) =>
-              element.product_name!.toLowerCase().contains(value.toLowerCase()))
+              element.name!.toLowerCase().contains(value.toLowerCase()))
           .toList();
     });
   }
 
   void updateTrends(ProductModel product) {
     setState(() {
-      trending_products_list
-          .sort(((a, b) => b.product_views.compareTo(a.product_views)));
+      trending_products_list.sort(((a, b) => b.views.compareTo(a.views)));
       trend_list = trending_products_list.sublist(0, 5);
     });
   }
 
   void displayProduct(ProductModel product) {
     setState(() {});
-    product.product_views++;
+    product.views++;
     updateTrends(product);
     Navigator.push(context,
         MaterialPageRoute(builder: (context) => ProductDetail_view(product)));
@@ -115,7 +114,7 @@ class _SearchViewState extends State<SearchView> {
                                 displayProduct(display_list[index]);
                               },
                               child: Text(
-                                display_list[index].product_name!,
+                                display_list[index].name!,
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
@@ -133,11 +132,11 @@ class _SearchViewState extends State<SearchView> {
                           ),
                           SizedBox(height: 6.0),
                           Image.network(
-                            display_list[index].product_image!,
+                            display_list[index].image!,
                             height: 77,
                             width: 70,
                           ),
-                          Text("Price: ${display_list[index].product_price!}",
+                          Text("Price: ${display_list[index].price!}",
                               style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -192,7 +191,7 @@ class _SearchViewState extends State<SearchView> {
                                 displayProduct(trend_list[index]);
                               },
                               child: Text(
-                                trend_list[index].product_name!,
+                                trend_list[index].name!,
                                 style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
@@ -209,11 +208,11 @@ class _SearchViewState extends State<SearchView> {
                           ),
                           SizedBox(height: 6.0),
                           Image.network(
-                            trend_list[index].product_image!,
+                            trend_list[index].image!,
                             height: 130,
                             width: 120,
                           ),
-                          Text("Price: ${trend_list[index].product_price!}",
+                          Text("Price: ${trend_list[index].price!}",
                               style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,

@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
-import 'package:unimarket/Controllers/productGetController.dart';
+import 'package:unimarket/Controllers/Controller.dart';
 
 class ChatView extends StatefulWidget {
   const ChatView({super.key});
@@ -13,17 +13,18 @@ class ChatView extends StatefulWidget {
 
 class _ChatViewState extends State<ChatView> {
   Uint8List? image;
-  late ProductGetController control;
+  late Controller control;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Under Construction'),
-      ),
       body: Center(
-        child: Text(
-          'This area is under construction.',
-          style: TextStyle(fontSize: 20.0),
+        child: ElevatedButton(
+          onPressed: () {
+            // Add your button onPressed logic here
+            //print(Controller().cargarProductos().toString());
+            Controller().getProducts();
+          },
+          child: Text('Press Me'),
         ),
       ),
     );

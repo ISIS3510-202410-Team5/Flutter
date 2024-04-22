@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:unimarket/Views/search_view.dart';
-import 'package:unimarket/modelo/productos.dart';
 import 'package:flutter/services.dart';
 
 class HomeView extends StatefulWidget {
@@ -29,13 +28,6 @@ class _HomeViewState extends State<HomeView> {
         context, MaterialPageRoute(builder: (context) => SearchView()));
   }
 
-  Future<List<Producto>> productos() async {
-    final snapshot = await _DB.collection("productos").get();
-
-    final prods = snapshot.docs.map((e) => Producto.fromSnapshot(e)).toList();
-    return prods;
-  }
-
   List data = [];
   void getData() async {
     await FirebaseFirestore.instance
@@ -56,9 +48,9 @@ class _HomeViewState extends State<HomeView> {
         usuarios.add(i.data());
       }
     });
-    setState(() => usuariosN = usuarios[0]["regUsers"]);
-    print(usuarios[0] +
-        "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
+    // setState(() => usuariosN = usuarios[0]["regUsers"]);
+    // print(usuarios[0] +
+    // "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
   }
 
   // int contarProductos() {
