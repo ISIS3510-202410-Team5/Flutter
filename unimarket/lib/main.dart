@@ -8,7 +8,6 @@ import 'package:unimarket/Views/login_view.dart';
 import 'package:unimarket/firebase_options.dart';
 import 'package:unimarket/theme.dart';
 
-
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -26,13 +25,13 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => ThemeNotifier(),
       child: Consumer<ThemeNotifier>(
-        builder: (context, ThemeNotifier notifier, child){
+        builder: (context, ThemeNotifier notifier, child) {
           return MaterialApp(
             title: 'UniMarket',
             theme: notifier.darkTheme ? dark : light,
-            //home: const LoginView(),
+            home: const LoginView(),
             //home: const HomeView(),
-            home: const PublishView(),
+            // home: const PublishView(),
           );
         },
       ),
