@@ -1,4 +1,3 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:unimarket/Views/login_view.dart';
 import 'package:unimarket/Controllers/auth_controller.dart';
@@ -6,16 +5,20 @@ import 'package:unimarket/Controllers/auth_controller.dart';
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
   @override
-  EstadoRegistrarse createState() => EstadoRegistrarse();
+  State<RegisterView> createState() => _RegisterViewState();
 }
 
-class EstadoRegistrarse extends State<RegisterView> {
+class _RegisterViewState extends State<RegisterView> {
   String email = "";
   String contrasena = "";
   AuthController autenticador = AuthController();
   late bool registroExitoso;
 
-  void manejarRegistro() {}
+  @override
+  void initState() {
+    autenticador = AuthController();
+    super.initState();
+  }
 
   void showErrorDialog(BuildContext context) {
     showDialog(
@@ -23,8 +26,8 @@ class EstadoRegistrarse extends State<RegisterView> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Colors.red, // Set background color to red
-          title: Text('Oops!'),
-          content: Text(
+          title: const Text('Oops!'),
+          content: const Text(
               'Something went wrong registering your user. Make sure you are using a valid email format. Make sure your password is at least 6 characters long. Make sure your email is not associated with an existing account'),
           actions: <Widget>[
             TextButton(
@@ -32,7 +35,7 @@ class EstadoRegistrarse extends State<RegisterView> {
                 // Close the dialog
                 Navigator.of(context).pop();
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );
@@ -46,16 +49,16 @@ class EstadoRegistrarse extends State<RegisterView> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor: Colors.green, // Set background color to green
-          title: Text('Success!'),
-          content: Text('Registration successful! Now please sign in'),
+          title: const Text('Success!'),
+          content: const Text('Registration successful! Now please sign in'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 // Close the dialog
                 Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => LoginView()));
+                    MaterialPageRoute(builder: (context) => const LoginView()));
               },
-              child: Text('OK'),
+              child: const Text('OK'),
             ),
           ],
         );
@@ -144,10 +147,10 @@ class EstadoRegistrarse extends State<RegisterView> {
       backgroundColor: const Color.fromARGB(255, 250, 206, 190),
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => LoginView()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const LoginView()));
           },
         ),
         backgroundColor:

@@ -3,6 +3,7 @@
 
 class SellerModel{
 
+  String? seller_id;
   String? seller_name;
   int? seller_number;
   String? seller_email;
