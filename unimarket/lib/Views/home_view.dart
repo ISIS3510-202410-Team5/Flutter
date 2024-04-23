@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:light/light.dart';
 import 'package:provider/provider.dart';
 import 'package:unimarket/Controllers/home_controller.dart';
 import 'package:unimarket/Views/search_view.dart';
 import 'package:flutter/services.dart';
-import 'package:light/light.dart';
 import 'package:unimarket/main.dart';
 import 'package:unimarket/theme.dart';
 

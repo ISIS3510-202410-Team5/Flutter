@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
-import 'package:unimarket/Controllers/search_controller.dart';
+import 'package:unimarket/Controllers/search_controllerUnimarket.dart';
 
 class ChatView extends StatefulWidget {
   const ChatView({super.key});

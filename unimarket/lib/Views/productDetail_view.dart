@@ -1,16 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unimarket/Models/product_model.dart';
 
-class ProductDetail {
-  late ProductModel product;
-  late StatelessWidget view;
-
-  ProductDetail(ProductModel prod) {
-    product = prod;
-    view = ProductDetail_view(product);
-  }
-}
-
 class ProductDetail_view extends StatelessWidget {
   late final ProductModel product;
 

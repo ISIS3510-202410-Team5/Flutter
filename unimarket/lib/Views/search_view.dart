@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:unimarket/Controllers/search_controller.dart';
-
-import 'package:unimarket/Models/model.dart';
+import 'package:unimarket/Controllers/search_controllerUnimarket.dart';
 import 'package:unimarket/Models/product_model.dart';
 import 'package:unimarket/Views/productDetail_view.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:unimarket/Controllers/search_controller.dart';
 
 class SearchView extends StatefulWidget {
   const SearchView({super.key});
@@ -15,6 +11,7 @@ class SearchView extends StatefulWidget {
 }
 
 class _SearchViewState extends State<SearchView> {
+  final TextEditingController _searchController = TextEditingController();
   List<ProductModel> products_list = SearchControllerUnimarket().getProducts();
 
   late List<ProductModel> trending_products_list = products_list;
@@ -24,7 +21,7 @@ class _SearchViewState extends State<SearchView> {
 
   void updateList(String value) {
     setState(() {
-      displayList = productsList
+      display_list = products_list
           .where((element) =>
               element.name!.toLowerCase().contains(value.toLowerCase()))
           .toList();
@@ -43,7 +40,7 @@ class _SearchViewState extends State<SearchView> {
     product.views++;
     updateTrends(product);
     Navigator.push(context,
-        MaterialPageRoute(builder: (context) => ProductDetailView(product)));
+        MaterialPageRoute(builder: (context) => ProductDetail_view(product)));
   }
 
   Set<String> selected = {'Selected Product'};
@@ -80,7 +77,7 @@ class _SearchViewState extends State<SearchView> {
           children: [
             TextField(
               onChanged: (value) => updateList(value),
-              controller: _searchController.searchBarController,
+              controller: _searchController,
               style: const TextStyle(color: Colors.black),
               textAlign: TextAlign.center,
               decoration: InputDecoration(
@@ -97,7 +94,7 @@ class _SearchViewState extends State<SearchView> {
             const SizedBox(height: 7.0),
             Expanded(
               child: GridView.builder(
-                itemCount: displayList.length,
+                itemCount: display_list.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2),
                 itemBuilder: (context, index) => ListTile(
@@ -113,7 +110,7 @@ class _SearchViewState extends State<SearchView> {
                         children: [
                           TextButton(
                               onPressed: () {
-                                displayProduct(displayList[index]);
+                                displayProduct(display_list[index]);
                               },
                               child: Text(
                                 display_list[index].name!,
@@ -175,7 +172,7 @@ class _SearchViewState extends State<SearchView> {
             const SizedBox(height: 1.0),
             Expanded(
               child: ListView.builder(
-                itemCount: trendList.length,
+                itemCount: trend_list.length,
                 itemBuilder: (context, index) => ListTile(
                   contentPadding: const EdgeInsets.all(8.0),
                   title: Column(children: [
@@ -190,7 +187,7 @@ class _SearchViewState extends State<SearchView> {
                         children: [
                           TextButton(
                               onPressed: () {
-                                displayProduct(trendList[index]);
+                                displayProduct(trend_list[index]);
                               },
                               child: Text(
                                 trend_list[index].name!,

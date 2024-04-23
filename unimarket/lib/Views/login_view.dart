@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:unimarket/Controllers/search_controller.dart';
-import 'package:unimarket/Views/home_view.dart';
+import 'package:unimarket/Controllers/search_controllerUnimarket.dart';
 import 'package:unimarket/Views/register_view.dart';
 import 'package:unimarket/Controllers/auth_controller.dart';
-import 'package:unimarket/Views/body_view.dart';
-
-import 'package:unimarket/Controllers/auth_controller.dart';
-import 'package:unimarket/Views/register_view.dart';
 import 'package:unimarket/Views/body_view.dart';
 
 class LoginView extends StatefulWidget {

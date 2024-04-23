@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             title: 'UniMarket',
             theme: notifier.darkTheme ? dark : light,
-            home: const LoginView(),
+            home: const BodyView(),
             //home: const HomeView(),
             // home: const PublishView(),
           );
