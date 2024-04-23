@@ -1,10 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:unimarket/Views/body_view.dart';
 import 'package:unimarket/Views/home_view.dart';
 import 'package:unimarket/Views/publish_view.dart';
 import 'package:unimarket/Views/login_view.dart';
 import 'package:unimarket/firebase_options.dart';
+import 'package:unimarket/theme.dart';
+
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,16 +23,19 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'UniMarket',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
-        useMaterial3: true,
-        
+    return ChangeNotifierProvider(
+      create: (_) => ThemeNotifier(),
+      child: Consumer<ThemeNotifier>(
+        builder: (context, ThemeNotifier notifier, child){
+          return MaterialApp(
+            title: 'UniMarket',
+            theme: notifier.darkTheme ? dark : light,
+            //home: const LoginView(),
+            //home: const HomeView(),
+            home: const PublishView(),
+          );
+        },
       ),
-      home: const LoginView(),
-      //home: HomeView(),
-      //home: PublishView(),
     );
   }
 }

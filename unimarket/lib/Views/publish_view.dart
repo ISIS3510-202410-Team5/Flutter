@@ -3,8 +3,10 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:unimarket/Controllers/publish_controller.dart';
 import 'package:unimarket/Models/product_model.dart';
+import 'package:unimarket/theme.dart';
 
 
 enum ColorLabel {
@@ -61,11 +63,10 @@ class _PublishViewState extends State<PublishView> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
-      backgroundColor: Colors.grey[200],
       appBar: AppBar(
         centerTitle: true,
-        backgroundColor: Colors.white,
         title: const Column(
             children: [
               Text("Publish a New Product", style: TextStyle(color: Colors.black, fontSize: 22.0, fontWeight: FontWeight.bold)),
@@ -77,14 +78,12 @@ class _PublishViewState extends State<PublishView> {
         ListView(
           scrollDirection: Axis.vertical,
           children: [
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Column(
+            Card(
+              color: Provider.of<ThemeNotifier>(context).getTheme().cardColor,
+              margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+              child: Padding(
+                padding: EdgeInsets.all(18.0),
+                child: Column(
                 children: [
                   Stack(
                     children: [
@@ -227,7 +226,7 @@ class _PublishViewState extends State<PublishView> {
                               controller: _publishController.useController,
                               requestFocusOnTap: true,
                               label: const Text('Use'),
-                              width: 140.0,
+                              width: 110.0,
                               onSelected: (ColorLabel? color) {
                                 setState(() {
                                   selectedColor = color;
@@ -296,8 +295,9 @@ class _PublishViewState extends State<PublishView> {
                     ],
                   )
                 ],
-              ),
-            )
+              ),)
+            ),
+            
           ],
         )
     );

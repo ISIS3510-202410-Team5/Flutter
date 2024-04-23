@@ -1,7 +1,13 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:unimarket/Controllers/home_controller.dart';
 import 'package:unimarket/Views/search_view.dart';
+import 'package:light/light.dart';
+import 'package:unimarket/main.dart';
+import 'package:unimarket/theme.dart';
 
 
 class HomeView extends StatefulWidget {
@@ -14,14 +20,58 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
 
   late HomeController _homeController;
+  Light? _light;
+  StreamSubscription? _subscription;
+  
+  String? _luxString;
+  bool toggle = true;
+  bool isDarkTheme = false;
+  late bool sessionThemeConfigured;
+  
+
+  void onData(int luxValue) async {
+    double lightLevel = double.tryParse('$luxValue') ?? 0.0;
+    //print("Lux value: $luxValue");
+    setState(() {
+      _luxString = "$luxValue";
+    });
+    if(lightLevel <= 10.0 && !isDarkTheme && !sessionThemeConfigured){
+      showDarkThemeDialog(context);
+      sessionThemeConfigured = true;
+      print('Error 1');
+    } else if(lightLevel >= 40 && isDarkTheme && !sessionThemeConfigured){
+      print('Error 2');
+      showLightThemeDialog(context);
+      sessionThemeConfigured = true;
+    }
+  }
+
+  void stopListening(){
+    _subscription?.cancel();
+  }
+
+  void startListening(){
+    _light = Light();
+    try{
+      _subscription = _light?.lightSensorStream.listen(onData);
+    } on LightException catch(exception){
+      print(exception);
+    }
+  }
 
   @override
   void initState() {
     // Note that you cannot use `async await` in  initState
+    super.initState();
     getData();
     getData1();
     _homeController = HomeController();
-    super.initState();
+    initPlatformState();
+    sessionThemeConfigured = false;
+  }
+
+  Future<void> initPlatformState() async {
+    startListening();
   }
 
   final db = FirebaseFirestore.instance;
@@ -54,7 +104,7 @@ class _HomeViewState extends State<HomeView> {
         usuarios.add(i.data());
       }
     });
-    setState(() => usuariosN = usuarios[0]["regUsers"]);
+    setState(() => usuariosN = usuarios.length);
   }
 
   // int contarProductos() {
@@ -70,11 +120,71 @@ class _HomeViewState extends State<HomeView> {
   //   return 1;
   // }
 
+  void showDarkThemeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+                backgroundColor: Colors.white, // Set background color to green
+                title: const Text('Dark Theme Suggestion'),
+                content: const Text('We have noticed that you are in a place without too much light. Would you like to change to the Dark Mode?'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Cancel'),
+                  ),
+
+                  TextButton(
+                    onPressed: () {
+                      Provider.of<ThemeNotifier>(context, listen: false).toogleTheme();
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Accept'),
+                  ),
+                ],
+              );
+      },
+    );
+  }
+
+  void showLightThemeDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+                backgroundColor: Colors.grey[800], // Set background color to green
+                title: const Text('Light Theme Suggestion'),
+                content: const Text('We have noticed that you are in a place with a lot of light. Would you like to change to the Light Mode?'),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Cancel'),
+                  ),
+
+                  TextButton(
+                    onPressed: () {
+                      Provider.of<ThemeNotifier>(context, listen: false).toogleTheme();
+                      Navigator.of(context).pop();
+                    },
+                    child: const Text('Accept'),
+                  ),
+                ],
+              );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+
+    isDarkTheme = Provider.of<ThemeNotifier>(context).darkTheme;
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      backgroundColor: Colors.grey[200],
       body: ListView(
         children: [
           const SizedBox(
@@ -163,204 +273,227 @@ class _HomeViewState extends State<HomeView> {
             ),
           ),
 
-          const SizedBox(
-            height: 15,
-          ),
+          const SizedBox(height: 15,),
 
-          TextField(
-            onTap: () {
-              searchSelection();
-              getData();
-            },
-            style: const TextStyle(color: Colors.black),
-            textAlign: TextAlign.center,
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(60.0),
-                borderSide: BorderSide.none,
+          Row(
+            children: [
+              const SizedBox(width: 30,),
+              SizedBox(
+                height: 50,
+                width: 300,
+                child: TextField(
+                  onTap: () {
+                    searchSelection();
+                    getData();
+                  },
+                  style: const TextStyle(color: Colors.black),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  decoration: InputDecoration(
+                    filled: true,
+                    fillColor: Provider.of<ThemeNotifier>(context).getTheme().cardColor,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(60.0),
+                      borderSide: BorderSide.none,
+                    ),
+                    hintText: "Search Products...",
+                    prefixIcon: const Icon(Icons.search),
+                  ),
+                ),
               ),
-              hintText: "Search Products...",
-              prefixIcon: const Icon(Icons.search),
-            ),
+              const SizedBox(width: 30,)
+            ],
           ),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(18),
-            ),
-            margin: const EdgeInsets.all(11.0),
-            child: Column(
-              children: [
-                const Row(
-                  children: [
-                    SizedBox(
-                      width: 30,
-                    ),
-                    Text(
-                      "What are you looking for?",
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                  ],
-                ),
-                const Divider(
-                  thickness: 3,
-                  color: Colors.grey,
-                  indent: 30,
-                  endIndent: 30,
-                ),
 
-                const SizedBox(
-                  height: 40,
-                ),
+          Consumer<ThemeNotifier>(
+            builder: (context, notifier, child) => 
+            Card(
+              margin: const EdgeInsets.all(20.0),
+              color: notifier.getTheme().cardColor,
+              child: Column(
+                children: [
+                  const SizedBox(height: 10,),
+                  const Row(
+                    children: [
+                      SizedBox(
+                        width: 40,
+                      ),
+                      Text(
+                        "What are you looking for?",
+                        style:
+                            TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      ),
+                    ],
+                  ),
+                  const Divider(
+                    thickness: 3,
+                    color: Colors.grey,
+                    indent: 30,
+                    endIndent: 30,
+                  ),
 
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Column(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            border:
-                                Border.all(color: Colors.deepOrange, width: 5),
+                  const SizedBox(
+                    height: 40,
+                  ),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        children: [
+                          Card(
+                            color: notifier.getTheme().dividerColor,
+                            child: InkWell(
+                              onTap: (){print('Holsiok');},
+                              child: Column(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(color: Colors.deepOrange, width: 5),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Icon(Icons.format_paint, size: 65, color: notifier.getTheme().hintColor),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ),
                           ),
-                          child: const Column(
-                            children: [
-                              Icon(
-                                Icons.format_paint,
-                                size: 65,
-                              ),
-                            ],
+                          const Text("Art Materials", style: TextStyle(fontWeight: FontWeight.bold),),
+                        ],
+                      ),
+                      
+                      const SizedBox(width: 60,),
+
+                      Column(
+                        children: [
+                          Card(
+                            color: notifier.getTheme().dividerColor,
+                            child: InkWell(
+                              onTap: (){print('Holsiok');},
+                              child: Column(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(color: Colors.deepOrange, width: 5),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Icon(Icons.camera_rounded, size: 65, color: notifier.getTheme().hintColor),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ),
                           ),
-                        ),
-                        const Text(
-                          "Art Materials",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      width: 100,
-                    ),
-                    Column(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            border:
-                                Border.all(color: Colors.deepOrange, width: 5),
+                          const Text("Audiovisuals", style: TextStyle(fontWeight: FontWeight.bold),),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 60,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        children: [
+                          Card(
+                            color: notifier.getTheme().dividerColor,
+                            child: InkWell(
+                              onTap: (){print('Holsiok');},
+                              child: Column(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(color: Colors.deepOrange, width: 5),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Icon(Icons.security_rounded, size: 65, color: notifier.getTheme().hintColor),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ),
                           ),
-                          child: const Column(
-                            children: [
-                              Icon(
-                                Icons.camera_rounded,
-                                size: 65,
-                              ),
-                            ],
+                          const Text("Security", style: TextStyle(fontWeight: FontWeight.bold),),
+                        ],
+                      ),
+                      const SizedBox(width: 60,),
+                      Column(
+                        children: [
+                          Card(
+                            color: notifier.getTheme().dividerColor,
+                            child: InkWell(
+                              onTap: (){print('Holsiok');},
+                              child: Column(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(color: Colors.deepOrange, width: 5),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Icon(Icons.book, size: 65, color: notifier.getTheme().hintColor),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ),
                           ),
-                        ),
-                        const Text("Audiovisuals",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 60,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Column(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            border:
-                                Border.all(color: Colors.deepOrange, width: 5),
+                          const Text("Books", style: TextStyle(fontWeight: FontWeight.bold),),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 60,),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Column(
+                        children: [
+                          Card(
+                            color: notifier.getTheme().dividerColor,
+                            child: InkWell(
+                              onTap: (){print('Holsiok');},
+                              child: Column(
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(12),
+                                      border: Border.all(color: Colors.deepOrange, width: 5),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Icon(Icons.computer_rounded, size: 65, color: notifier.getTheme().hintColor),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ),
                           ),
-                          child: const Column(
-                            children: [
-                              Icon(
-                                Icons.security_rounded,
-                                size: 65,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Text("Security",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                    const SizedBox(
-                      width: 100,
-                    ),
-                    Column(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            border:
-                                Border.all(color: Colors.deepOrange, width: 5),
-                          ),
-                          child: const Column(
-                            children: [
-                              Icon(
-                                Icons.book,
-                                size: 65,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Text("Books",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 60,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Column(
-                      children: [
-                        Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(12),
-                            border:
-                                Border.all(color: Colors.deepOrange, width: 5),
-                          ),
-                          child: const Column(
-                            children: [
-                              Icon(
-                                Icons.computer_rounded,
-                                size: 65,
-                              ),
-                            ],
-                          ),
-                        ),
-                        const Text("Hardware",
-                            style: TextStyle(fontWeight: FontWeight.bold)),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  height: 20,
-                ),
-              ],
-            ),
-          ),
+                          const Text("Hardware", style: TextStyle(fontWeight: FontWeight.bold),),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 20,
+                  ),
+                ],
+              ),
+            )
+          )
           
         ],
       ),
