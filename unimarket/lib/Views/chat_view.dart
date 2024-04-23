@@ -2,7 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
-import 'package:unimarket/Controllers/Controller.dart';
+import 'package:unimarket/Controllers/search_controller.dart';
 
 class ChatView extends StatefulWidget {
   const ChatView({super.key});
@@ -13,7 +13,6 @@ class ChatView extends StatefulWidget {
 
 class _ChatViewState extends State<ChatView> {
   Uint8List? image;
-  late Controller control;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,7 +21,7 @@ class _ChatViewState extends State<ChatView> {
           onPressed: () {
             // Add your button onPressed logic here
             //print(Controller().cargarProductos().toString());
-            Controller().getProducts();
+            // SearchController().getProducts();
           },
           child: Text('Press Me'),
         ),

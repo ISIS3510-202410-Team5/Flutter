@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:unimarket/Model/product_model.dart';
+import 'package:unimarket/Models/product_model.dart';
 
 class ProductDetail {
   late ProductModel product;

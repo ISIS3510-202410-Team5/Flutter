@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:unimarket/Controllers/Controller.dart';
-import 'package:unimarket/Model/model.dart';
-import 'package:unimarket/Model/product_model.dart';
+import 'package:unimarket/Controllers/search_controller.dart';
+
+import 'package:unimarket/Models/model.dart';
+import 'package:unimarket/Models/product_model.dart';
 import 'package:unimarket/Views/productDetail_view.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -14,7 +15,7 @@ class SearchView extends StatefulWidget {
 }
 
 class _SearchViewState extends State<SearchView> {
-  List<ProductModel> products_list = Controller().getProducts();
+  List<ProductModel> products_list = SearchControllerUnimarket().getProducts();
 
   late List<ProductModel> trending_products_list = products_list;
 

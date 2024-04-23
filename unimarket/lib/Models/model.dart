@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:unimarket/Model/Repository/productReposirory.dart';
-import 'package:unimarket/Model/product_model.dart';
+import 'package:unimarket/Models/Repository/productReposirory.dart';
+import 'package:unimarket/Models/product_model.dart';
 
 class Model {
   final productos = <ProductModel>[];

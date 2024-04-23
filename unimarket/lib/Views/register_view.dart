@@ -1,20 +1,67 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:unimarket/Controllers/Controller.dart';
-import 'package:unimarket/Views/home_view.dart';
-import 'package:unimarket/Views/vista_registrarse.dart';
-import 'package:unimarket/Controllers/auth.dart';
-import 'package:unimarket/Views/body_view.dart';
+import 'package:unimarket/Views/login_view.dart';
+import 'package:unimarket/Controllers/auth_controller.dart';
 
-class VistaLogin extends StatefulWidget {
+class RegisterView extends StatefulWidget {
+  const RegisterView({super.key});
   @override
-  EstadoLogin createState() => EstadoLogin();
+  EstadoRegistrarse createState() => EstadoRegistrarse();
 }
 
-class EstadoLogin extends State<VistaLogin> {
+class EstadoRegistrarse extends State<RegisterView> {
   String email = "";
   String contrasena = "";
-  AuthService autenticador = AuthService();
+  AuthController autenticador = AuthController();
+  late bool registroExitoso;
+
+  void manejarRegistro() {}
+
+  void showErrorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.red, // Set background color to red
+          title: Text('Oops!'),
+          content: Text(
+              'Something went wrong registering your user. Make sure you are using a valid email format. Make sure your password is at least 6 characters long. Make sure your email is not associated with an existing account'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                // Close the dialog
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void showSuccessDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Colors.green, // Set background color to green
+          title: Text('Success!'),
+          content: Text('Registration successful! Now please sign in'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                // Close the dialog
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => LoginView()));
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
 //hace parte del scaffold. ignorar para otras cosas
   Widget _buildTextField(String labelText, String hintText,
@@ -91,45 +138,22 @@ class EstadoLogin extends State<VistaLogin> {
     );
   }
 
-  void showErrorDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          backgroundColor: Colors.red, // Set background color to red
-          title: Text('Oops!'),
-          content: Text(
-              'Something went wrong singing in. Make sure the credentials you are providing are correct and that you already have an account registered'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                // Close the dialog
-                Navigator.of(context).pop();
-              },
-              child: Text('OK'),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    void authenticationProcess(bool existing_user) {
-      // Aquí va el proceso de verificación con Firebase
-
-      if (existing_user) {
-        Controller().cargarProductos();
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => BodyView()));
-      } else {
-        showErrorDialog(context);
-      }
-    }
-
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 250, 206, 190),
+      appBar: AppBar(
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.push(
+                context, MaterialPageRoute(builder: (context) => LoginView()));
+          },
+        ),
+        backgroundColor:
+            Colors.transparent, // Para hacer transparente la AppBar
+        elevation: 0, // Para eliminar la sombra debajo de la AppBar
+      ),
       body: Column(
         children: [
           Container(
@@ -148,8 +172,7 @@ class EstadoLogin extends State<VistaLogin> {
             child: Center(
               child: Container(
                 width: 350,
-                height: 550,
-                // margin: const EdgeInsets.only(bottom: 100),
+                margin: const EdgeInsets.only(bottom: 100),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   color: const Color.fromARGB(255, 255, 100, 35),
@@ -163,7 +186,7 @@ class EstadoLogin extends State<VistaLogin> {
                         const Padding(
                           padding: EdgeInsets.only(bottom: 35),
                           child: Text(
-                            'Sign in',
+                            'Register',
                             style: TextStyle(
                               fontSize: 36.0,
                               fontWeight: FontWeight.bold,
@@ -178,39 +201,23 @@ class EstadoLogin extends State<VistaLogin> {
                         const SizedBox(height: 20.0),
                         ElevatedButton(
                           onPressed: () async {
-                            authenticationProcess(
-                                await autenticador.ingresar(email, contrasena));
+                            // try {
+                            autenticador.registrar(email, contrasena).then(
+                                (value) => value == null
+                                    ? showErrorDialog(context)
+                                    : showSuccessDialog(context));
+                            // } catch (e) {
+                            //   print(e.toString() + "9999999999999999999999");
+                            //   showErrorDialog(context);
+                            // }
+
+                            // print(registroExitoso);
+                            // registroExitoso
+                            //     ? showErrorDialog(context)
+                            // showErrorDialog(context);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
-                            padding:
-                                const EdgeInsets.symmetric(horizontal: 40.0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                          ),
-                          child: const Text(
-                            'Sign in',
-                            style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(
-                            height:
-                                20.0), // Add some space between the Sign in button and Register button
-                        ElevatedButton(
-                          onPressed: () {
-                            // Add your registration logic here
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => VistaRegistrarse()));
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.orange,
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 40.0),
                             shape: RoundedRectangleBorder(

@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:developer' as dev;
 
-class AuthService {
+class AuthController {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
 //iniciari sesión con email y contraseña
