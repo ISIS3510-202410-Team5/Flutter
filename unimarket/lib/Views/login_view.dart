@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:unimarket/Controllers/auth_controller.dart';
+import 'package:unimarket/Controllers/search_controllerUnimarket.dart';
 import 'package:unimarket/Views/register_view.dart';
+import 'package:unimarket/Controllers/auth_controller.dart';
 import 'package:unimarket/Views/body_view.dart';
-
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -12,14 +12,13 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-
   late AuthController _authController;
 
   String email = "";
   String contrasena = "";
-  
+
   @override
-  void initState(){
+  void initState() {
     _authController = AuthController();
     super.initState();
   }
@@ -123,11 +122,11 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-
     void authenticationProcess(bool existingUser) {
       // Aquí va el proceso de verificación con Firebase
 
       if (existingUser) {
+        SearchControllerUnimarket().cargarProductos();
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => const BodyView()));
       } else {
@@ -185,7 +184,8 @@ class _LoginViewState extends State<LoginView> {
                         const SizedBox(height: 20.0),
                         ElevatedButton(
                           onPressed: () async {
-                            authenticationProcess(await _authController.ingresar(email, contrasena));
+                            authenticationProcess(await _authController
+                                .ingresar(email, contrasena));
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
@@ -213,7 +213,8 @@ class _LoginViewState extends State<LoginView> {
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const RegisterView()));
+                                    builder: (context) =>
+                                        const RegisterView()));
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.orange,
@@ -244,4 +245,3 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 }
-

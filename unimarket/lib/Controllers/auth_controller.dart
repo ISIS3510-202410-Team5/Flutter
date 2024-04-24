@@ -2,18 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:unimarket/Models/user_model.dart';
 
-
-class AuthController extends ChangeNotifier{
-
+class AuthController {
   final FirebaseAuth auth = FirebaseAuth.instance;
 
-// crear usuario a partir del firebaseuser
-  UserModel? usuarioFireBase(User user) {
-    // ignore: unnecessary_null_comparison
-    return user != null ? UserModel(usuarioId: user.uid) : null;
-  }
-
-//iniciar sesión con email y contraseña
+//iniciari sesión con email y contraseña
   Future ingresar(String email, String password) async {
     try {
       UserCredential result = await auth.signInWithEmailAndPassword(

@@ -1,25 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:unimarket/Controllers/auth_controller.dart';
 import 'package:unimarket/Views/login_view.dart';
+import 'package:unimarket/Controllers/auth_controller.dart';
 
 class RegisterView extends StatefulWidget {
   const RegisterView({super.key});
-
   @override
   State<RegisterView> createState() => _RegisterViewState();
 }
 
 class _RegisterViewState extends State<RegisterView> {
-
-  late AuthController _authController;
-
   String email = "";
   String contrasena = "";
+  AuthController autenticador = AuthController();
   late bool registroExitoso;
-  
+
   @override
-  void initState(){
-    _authController = AuthController();
+  void initState() {
+    autenticador = AuthController();
     super.initState();
   }
 
@@ -143,18 +140,17 @@ class _RegisterViewState extends State<RegisterView> {
       ],
     );
   }
-  
+
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       backgroundColor: const Color.fromARGB(255, 250, 206, 190),
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.push(
-                context, MaterialPageRoute(builder: (context) => const LoginView()));
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const LoginView()));
           },
         ),
         backgroundColor:
@@ -209,7 +205,7 @@ class _RegisterViewState extends State<RegisterView> {
                         ElevatedButton(
                           onPressed: () async {
                             // try {
-                            _authController.registrar(email, contrasena).then(
+                            autenticador.registrar(email, contrasena).then(
                                 (value) => value == null
                                     ? showErrorDialog(context)
                                     : showSuccessDialog(context));

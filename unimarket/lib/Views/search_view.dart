@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:unimarket/Controllers/search_controllerUnimarket.dart';
 import 'package:unimarket/Models/product_model.dart';
 import 'package:unimarket/Views/productDetail_view.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:unimarket/Controllers/search_controller.dart';
-
 
 class SearchView extends StatefulWidget {
   const SearchView({super.key});
@@ -13,51 +11,36 @@ class SearchView extends StatefulWidget {
 }
 
 class _SearchViewState extends State<SearchView> {
+  final TextEditingController _searchController = TextEditingController();
+  List<ProductModel> products_list = SearchControllerUnimarket().getProducts();
 
-  late SearchCoontroller _searchController;
+  late List<ProductModel> trending_products_list = products_list;
 
-  @override
-  void initState(){
-    _searchController = SearchCoontroller();
-    super.initState();
-  }
-
-  //productos de la base ded datos
-  Future<int> productos =
-      FirebaseFirestore.instance.collection('productos').snapshots().length;
-
-  static List<ProductModel> productsList = [
-    
-  ];
-
-  static List<ProductModel> trendingProductsList = productsList;
-
-  List<ProductModel> displayList = List.from(productsList);
-  List<ProductModel> trendList = productsList.sublist(0, 5);
+  late List<ProductModel> display_list = List.from(products_list);
+  late List<ProductModel> trend_list = products_list.sublist(0, 5);
 
   void updateList(String value) {
     setState(() {
-      displayList = productsList
+      display_list = products_list
           .where((element) =>
-              element.product_name!.toLowerCase().contains(value.toLowerCase()))
+              element.name!.toLowerCase().contains(value.toLowerCase()))
           .toList();
     });
   }
 
   void updateTrends(ProductModel product) {
     setState(() {
-      trendingProductsList
-          .sort(((a, b) => b.product_views.compareTo(a.product_views)));
-      trendList = trendingProductsList.sublist(0, 5);
+      trending_products_list.sort(((a, b) => b.views.compareTo(a.views)));
+      trend_list = trending_products_list.sublist(0, 5);
     });
   }
 
   void displayProduct(ProductModel product) {
     setState(() {});
-    product.product_views++;
+    product.views++;
     updateTrends(product);
     Navigator.push(context,
-        MaterialPageRoute(builder: (context) => ProductDetailView(product)));
+        MaterialPageRoute(builder: (context) => ProductDetail_view(product)));
   }
 
   Set<String> selected = {'Selected Product'};
@@ -94,7 +77,7 @@ class _SearchViewState extends State<SearchView> {
           children: [
             TextField(
               onChanged: (value) => updateList(value),
-              controller: _searchController.searchBarController,
+              controller: _searchController,
               style: const TextStyle(color: Colors.black),
               textAlign: TextAlign.center,
               decoration: InputDecoration(
@@ -110,9 +93,8 @@ class _SearchViewState extends State<SearchView> {
             ),
             const SizedBox(height: 7.0),
             Expanded(
-              
               child: GridView.builder(
-                itemCount: displayList.length,
+                itemCount: display_list.length,
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 2),
                 itemBuilder: (context, index) => ListTile(
@@ -121,20 +103,18 @@ class _SearchViewState extends State<SearchView> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(30),
-                        
                       ),
                       height: 500,
                       child: Expanded(
                           child: Column(
-                        
                         children: [
                           TextButton(
                               onPressed: () {
-                                displayProduct(displayList[index]);
+                                displayProduct(display_list[index]);
                               },
                               child: Text(
-                                displayList[index].product_name!,
-                                style: const TextStyle(
+                                display_list[index].name!,
+                                style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Roboto',
@@ -151,12 +131,12 @@ class _SearchViewState extends State<SearchView> {
                           ),
                           const SizedBox(height: 6.0),
                           Image.network(
-                            displayList[index].product_image!,
+                            display_list[index].image!,
                             height: 77,
                             width: 70,
                           ),
-                          Text("Price: ${displayList[index].product_price!}",
-                              style: const TextStyle(
+                          Text("Price: ${display_list[index].price!}",
+                              style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'Roboto')),
@@ -192,7 +172,7 @@ class _SearchViewState extends State<SearchView> {
             const SizedBox(height: 1.0),
             Expanded(
               child: ListView.builder(
-                itemCount: trendList.length,
+                itemCount: trend_list.length,
                 itemBuilder: (context, index) => ListTile(
                   contentPadding: const EdgeInsets.all(8.0),
                   title: Column(children: [
@@ -207,11 +187,11 @@ class _SearchViewState extends State<SearchView> {
                         children: [
                           TextButton(
                               onPressed: () {
-                                displayProduct(trendList[index]);
+                                displayProduct(trend_list[index]);
                               },
                               child: Text(
-                                trendList[index].product_name!,
-                                style: const TextStyle(
+                                trend_list[index].name!,
+                                style: TextStyle(
                                     fontSize: 13,
                                     fontWeight: FontWeight.bold,
                                     fontFamily: 'Roboto',
@@ -227,12 +207,12 @@ class _SearchViewState extends State<SearchView> {
                           ),
                           const SizedBox(height: 6.0),
                           Image.network(
-                            trendList[index].product_image!,
+                            trend_list[index].image!,
                             height: 130,
                             width: 120,
                           ),
-                          Text("Price: ${trendList[index].product_price!}",
-                              style: const TextStyle(
+                          Text("Price: ${trend_list[index].price!}",
+                              style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
                                   fontFamily: 'Roboto')),
