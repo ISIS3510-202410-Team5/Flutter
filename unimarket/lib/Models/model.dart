@@ -4,6 +4,7 @@ import 'package:unimarket/Models/product_model.dart';
 
 class Model {
   final productos = <ProductModel>[];
+  var userId;
 
   static final Model single = Model._();
   factory Model() => single;
@@ -19,5 +20,13 @@ class Model {
 
   cargarProductos() {
     ProductRepository().getData();
+  }
+
+  setUserId(String? uid) {
+    userId = uid;
+  }
+
+  getUsedId() {
+    return userId;
   }
 }

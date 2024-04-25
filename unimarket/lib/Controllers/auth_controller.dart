@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:unimarket/Models/model.dart';
 import 'package:unimarket/Models/user_model.dart';
 
 class AuthController {
@@ -11,6 +12,8 @@ class AuthController {
       UserCredential result = await auth.signInWithEmailAndPassword(
           email: email, password: password);
       User? usuario = result.user;
+      String? uuid = usuario?.uid.toString();
+      Model().setUserId(uuid);
       return true;
     } catch (error) {
       print(error.toString());

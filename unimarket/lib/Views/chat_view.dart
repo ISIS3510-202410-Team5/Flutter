@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
 import 'package:unimarket/Controllers/search_controllerUnimarket.dart';
+import 'package:unimarket/Models/model.dart';
 
 class ChatView extends StatefulWidget {
   const ChatView({super.key});
@@ -19,9 +20,7 @@ class _ChatViewState extends State<ChatView> {
       body: Center(
         child: ElevatedButton(
           onPressed: () {
-            // Add your button onPressed logic here
-            //print(Controller().cargarProductos().toString());
-            // SearchController().getProducts();
+            print(Model().getUsedId());
           },
           child: Text('Press Me'),
         ),
