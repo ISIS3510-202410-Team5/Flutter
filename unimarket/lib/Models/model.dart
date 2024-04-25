@@ -11,6 +11,7 @@ class Model {
   Model._();
 
   getProducts() {
+    cargarProductos();
     return productos;
   }
 

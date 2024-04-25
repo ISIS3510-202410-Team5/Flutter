@@ -2,12 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:shake/shake.dart';
 import 'package:unimarket/Views/chat_view.dart';
 import 'package:unimarket/Views/home_view.dart';
+import 'package:unimarket/Views/productDetail_view.dart';
 import 'package:unimarket/Views/publish_view.dart';
 import 'package:unimarket/Views/search_view.dart';
 import 'package:unimarket/nav_bar.dart';
 
 class BodyView extends StatefulWidget {
-  const BodyView({super.key});
+  BodyView({super.key});
+
+  late Widget currentView;
+
+  set curreView(Widget newViw) {
+    currentView = newViw;
+  }
 
   @override
   State<BodyView> createState() => _BodyViewState();
@@ -15,6 +22,13 @@ class BodyView extends StatefulWidget {
 
 class _BodyViewState extends State<BodyView> {
   int currentIndex = 0;
+  late Widget currentView;
+
+  void setCurrentView(Widget newWidget){
+    currentView = newWidget;
+  }
+
+  
 
   var pageViewList = [
     Container(
@@ -56,16 +70,18 @@ class _BodyViewState extends State<BodyView> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       bottomNavigationBar: NavBar(
         onDestinationSelected: (int value) {
           setState(() {
             currentIndex = value;
+            currentView = pageViewList[currentIndex];
           });
         },
         selectedIndex: currentIndex,
       ),
-      body: pageViewList[currentIndex],
+      body: currentView,
     );
   }
 

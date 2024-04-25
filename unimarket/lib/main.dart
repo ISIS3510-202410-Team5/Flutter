@@ -5,6 +5,7 @@ import 'package:unimarket/Views/body_view.dart';
 import 'package:unimarket/Views/home_view.dart';
 import 'package:unimarket/Views/publish_view.dart';
 import 'package:unimarket/Views/login_view.dart';
+import 'package:unimarket/Views/search_view.dart';
 import 'package:unimarket/firebase_options.dart';
 import 'package:unimarket/Views/login_view.dart';
 import 'package:unimarket/Views/register_view.dart';
@@ -36,9 +37,11 @@ class MyApp extends StatelessWidget {
           return MaterialApp(
             title: 'UniMarket',
             theme: notifier.darkTheme ? dark : light,
-            home: const LoginView(),
+            debugShowCheckedModeBanner: false,
+            //home: const LoginView(),
             //home: const HomeView(),
             // home: const PublishView(),
+            home: const SearchView(),
           );
         },
       ),

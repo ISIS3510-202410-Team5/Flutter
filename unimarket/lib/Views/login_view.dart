@@ -128,7 +128,7 @@ class _LoginViewState extends State<LoginView> {
       if (existingUser) {
         SearchControllerUnimarket().cargarProductos();
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const BodyView()));
+            context, MaterialPageRoute(builder: (context) => BodyView()));
       } else {
         showErrorDialog(context);
       }

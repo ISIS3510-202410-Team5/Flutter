@@ -366,7 +366,8 @@ class _HomeViewState extends State<HomeView> {
                                             ),
                                           ),
                                         ],
-                                      )),
+                                      )
+                                    ),
                                 ),
                                 const Text(
                                   "Art Materials",
