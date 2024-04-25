@@ -10,20 +10,6 @@ class ProductRepository {
   final _DB = FirebaseFirestore.instance;
   int numProds = 0;
 
-  // Future<List<ProductModel>> cargarProductos() async {
-  //   final snapshot = await _DB.collection("products").get();
-  //   print(snapshot.docs.toString());
-  //   final prods =
-  //       snapshot.docs.map((e) => ProductModel.fromSnapshot(e)).toList();
-
-  //   return prods;
-  // }
-
-  // List<ProductModel> getProductos() {
-  //   cargarProductos().then((p) => productos = p);
-  //   return productos;
-  // }
-
   void getData() async {
     await FirebaseFirestore.instance.collection("products").get().then((value) {
       for (var i in value.docs) {

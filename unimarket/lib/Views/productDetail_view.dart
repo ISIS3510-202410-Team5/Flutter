@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unimarket/Controllers/productDetail_controller.dart';
 import 'package:unimarket/Models/product_model.dart';
 
 class ProductDetail_view extends StatelessWidget {
@@ -375,7 +376,8 @@ class ProductDetail_view extends StatelessWidget {
                           ),
                           ElevatedButton(
                             onPressed: () {
-                              addProductToCart();
+                              ProductDetailController()
+                                  .addProductToCart(product.id);
                             },
                             child: const Text(
                               'Add to Cart',

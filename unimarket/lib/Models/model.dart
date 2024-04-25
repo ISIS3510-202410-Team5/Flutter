@@ -26,7 +26,7 @@ class Model {
     userId = uid;
   }
 
-  getUsedId() {
+  getUserId() {
     return userId;
   }
 }

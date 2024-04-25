@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:unimarket/Models/Repository/cartRepository.dart';
 import 'package:unimarket/Models/model.dart';
 import 'package:unimarket/Models/user_model.dart';
 
@@ -14,6 +15,7 @@ class AuthController {
       User? usuario = result.user;
       String? uuid = usuario?.uid.toString();
       Model().setUserId(uuid);
+      CartRepository().createCart();
       return true;
     } catch (error) {
       print(error.toString());

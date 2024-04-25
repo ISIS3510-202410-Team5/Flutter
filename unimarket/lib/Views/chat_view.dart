@@ -3,6 +3,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
 import 'package:unimarket/Controllers/search_controllerUnimarket.dart';
+import 'package:unimarket/Models/Repository/cartRepository.dart';
+import 'package:unimarket/Models/Repository/productReposirory.dart';
 import 'package:unimarket/Models/model.dart';
 
 class ChatView extends StatefulWidget {
@@ -20,7 +22,7 @@ class _ChatViewState extends State<ChatView> {
       body: Center(
         child: ElevatedButton(
           onPressed: () {
-            print(Model().getUsedId());
+            print(CartRepository().createCart());
           },
           child: Text('Press Me'),
         ),
