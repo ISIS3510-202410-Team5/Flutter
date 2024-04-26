@@ -15,7 +15,9 @@ class AuthController {
       User? usuario = result.user;
       String? uuid = usuario?.uid.toString();
       Model().setUserId(uuid);
+
       CartRepository().createCart();
+      Model().loadCart();
       return true;
     } catch (error) {
       print(error.toString());

@@ -7,6 +7,7 @@ class Model {
   final productos = <ProductModel>[];
   final productosCarrito = <ProductModel>[];
   var userId;
+  var cartPrice;
 
   static final Model single = Model._();
   factory Model() => single;
@@ -20,7 +21,7 @@ class Model {
     return productosCarrito;
   }
 
-  ProductModel? getProductById(String id, String from) {
+  getProductById(String id, String from) {
     if (from == "Products") {
       ProductModel find() =>
           productos.firstWhere((product) => product.id == id);
@@ -28,11 +29,10 @@ class Model {
     } else if (from == "Cart") {
       ProductModel find() =>
           productosCarrito.firstWhere((product) => product.id == id);
-
       return find();
     }
 
-    return null;
+    return -1;
   }
 
   void addProduct(ProductModel p) {
@@ -60,9 +60,10 @@ class Model {
   }
 
   meterProductoCarrito(String idProducto) {
-    if (getProductById(idProducto, "Products") != null &&
-        getProductById(idProducto, "Cart") == null) {
-      productosCarrito.add(getProductById(idProducto, "Products"));
+    ProductModel producto = getProductById(idProducto, "Products");
+    if (!productosCarrito.contains(producto)) {
+      productosCarrito.add(producto);
+      cartPrice += producto.price;
     }
   }
 }

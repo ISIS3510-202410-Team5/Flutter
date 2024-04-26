@@ -23,7 +23,7 @@ class _ChatViewState extends State<ChatView> {
       body: Center(
         child: ElevatedButton(
           onPressed: () {
-            print(CartController().getCartProducts().toString());
+            print(Model().userId);
           },
           child: Text('Press Me'),
         ),

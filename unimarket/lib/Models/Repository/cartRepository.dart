@@ -31,6 +31,7 @@ class CartRepository {
       var valores = value.data();
       valores?.forEach((key, value) {
         if (key != "1") {
+          print(key);
           Model().meterProductoCarrito(key);
         }
       });
