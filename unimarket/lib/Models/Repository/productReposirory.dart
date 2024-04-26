@@ -11,7 +11,7 @@ class ProductRepository {
   int numProds = 0;
 
   void getData() async {
-    await FirebaseFirestore.instance.collection("products").get().then((value) {
+    await _DB.collection("products").get().then((value) {
       for (var i in value.docs) {
         ProductModel producto = ProductModel(
             i.id,
