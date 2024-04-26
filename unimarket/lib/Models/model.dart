@@ -7,7 +7,7 @@ class Model {
   final productos = <ProductModel>[];
   final productosCarrito = <ProductModel>[];
   var userId;
-  var cartPrice;
+  var cartPrice = 0;
 
   static final Model single = Model._();
   factory Model() => single;
@@ -65,5 +65,11 @@ class Model {
       productosCarrito.add(producto);
       cartPrice += producto.price;
     }
+  }
+
+  meterProductoCarritoInicio(String idProducto) {
+    ProductModel producto = getProductById(idProducto, "Products");
+    productosCarrito.add(producto);
+    cartPrice = cartPrice + producto.price;
   }
 }

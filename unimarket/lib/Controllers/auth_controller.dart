@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:unimarket/Controllers/cart_controller.dart';
+import 'package:unimarket/Controllers/search_controllerUnimarket.dart';
 import 'package:unimarket/Models/Repository/cartRepository.dart';
 import 'package:unimarket/Models/model.dart';
 import 'package:unimarket/Models/user_model.dart';
@@ -14,10 +16,11 @@ class AuthController {
           email: email, password: password);
       User? usuario = result.user;
       String? uuid = usuario?.uid.toString();
+      SearchControllerUnimarket().cargarProductos();
       Model().setUserId(uuid);
 
       CartRepository().createCart();
-      Model().loadCart();
+      CartRepository().getCart(Model().userId);
       return true;
     } catch (error) {
       print(error.toString());
