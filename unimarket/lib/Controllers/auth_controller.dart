@@ -20,7 +20,6 @@ class AuthController {
       Model().setUserId(uuid);
 
       CartRepository().createCart();
-      CartRepository().getCart(Model().userId);
       return true;
     } catch (error) {
       print(error.toString());
