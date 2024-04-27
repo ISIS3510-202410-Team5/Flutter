@@ -28,4 +28,23 @@ class ProductRepository {
     });
     CartRepository().getCart(Model().userId);
   }
+
+  Future getFilteredProducts(String category, bool use, List<ProductModel> lista) async {
+    await FirebaseFirestore.instance.collection("products")
+      .where(Filter.and(Filter('category', isEqualTo: category), 
+        Filter('used', isEqualTo: use))).get().then((value){
+          for (var i in value.docs) {
+            ProductModel producto = ProductModel(
+                i.id,
+                i.data()["name"],
+                i.data()["category"],
+                i.data()["price"],
+                i.data()["used"],
+                i.data()["image"],
+                i.data()["sold"],
+                i.data()["views"]);
+            Model().addFilteredProduct(producto, lista);
+          }
+    });
+  }
 }

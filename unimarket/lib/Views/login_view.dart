@@ -127,7 +127,7 @@ class _LoginViewState extends State<LoginView> {
 
       if (existingUser) {
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const BodyView()));
+            context, MaterialPageRoute(builder: (context) => BodyView()));
       } else {
         showErrorDialog(context);
       }
