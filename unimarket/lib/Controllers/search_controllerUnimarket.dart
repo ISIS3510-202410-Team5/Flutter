@@ -8,10 +8,17 @@ import 'package:unimarket/Models/seller_model.dart';
 
 class SearchControllerUnimarket extends ChangeNotifier {
 
+  final TextEditingController iconController = TextEditingController();
+  final TextEditingController useController = TextEditingController();
+
   final TextEditingController searchBarController = TextEditingController();
 
   getProducts() {
     return Model().getProducts();
+  }
+
+  getFilteredProducts(String category, bool use){
+    return Model().getFilteredProducts(category, use);
   }
 
   cargarProductos() {

@@ -1,14 +1,20 @@
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
+enum NetworkStatus {online, offline}
+
 class ConnectivityService {
 
-  final _connectivity = Connectivity();
-  final connectivityStream = StreamController<List<ConnectivityResult>>.broadcast();
+  StreamController<NetworkStatus> controller = StreamController();
+
+  NetworkStatus _networkStatus(List<ConnectivityResult> connectivityResult){
+    return connectivityResult.contains(ConnectivityResult.mobile) || connectivityResult.contains(ConnectivityResult.wifi) 
+      ? NetworkStatus.online : NetworkStatus.offline;
+  }
 
   ConnectivityService() {
-    _connectivity.onConnectivityChanged.listen((event) {
-      connectivityStream.add(event);
+    Connectivity().onConnectivityChanged.listen((event) {
+      controller.add(_networkStatus(event));
     });
   }
 }

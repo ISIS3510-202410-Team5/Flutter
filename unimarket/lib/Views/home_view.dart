@@ -123,7 +123,7 @@ class _HomeViewState extends State<HomeView> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Colors.white, // Set background color to green
+          backgroundColor: Colors.white,
           title: const Text('Dark Theme Suggestion'),
           content: const Text(
               'We have noticed that you are in a place without too much light. Would you like to change to the Dark Mode?'),
