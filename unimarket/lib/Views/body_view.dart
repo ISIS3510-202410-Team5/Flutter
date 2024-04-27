@@ -29,7 +29,11 @@ class _BodyViewState extends State<BodyView> {
     currentView = newWidget;
   }
 
-  
+  void setCurrentIndex(int index){
+    setState(() {
+      currentIndex = index;
+    });
+  }
 
   var pageViewList = [
     Container(
