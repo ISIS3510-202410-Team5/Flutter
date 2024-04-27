@@ -40,10 +40,10 @@ class MyApp extends StatelessWidget {
             title: 'UniMarket',
             theme: notifier.darkTheme ? dark : light,
             debugShowCheckedModeBanner: false,
-            //home: const LoginView(),
+            home: const LoginView(),
             //home: const HomeView(),
             // home: const PublishView(),
-            home: const SearchView(),
+            //home: const SearchView(),
           );
         },
       ),
