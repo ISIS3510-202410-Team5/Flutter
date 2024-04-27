@@ -44,6 +44,8 @@ dependencies:
   firebase_storage: ^11.7.2
   light: ^3.0.1
   shared_preferences: ^2.2.3
+  connectivity_plus: ^3.0.3
+  get: ^4.6.5
 
 dev_dependencies:
   flutter_test:
