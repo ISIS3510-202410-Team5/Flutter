@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shake/shake.dart';
+import 'package:unimarket/Views/cart_view.dart';
 import 'package:unimarket/Views/chat_view.dart';
 import 'package:unimarket/Views/home_view.dart';
 import 'package:unimarket/Views/productDetail_view.dart';
@@ -44,7 +45,7 @@ class _BodyViewState extends State<BodyView> {
     Container(
       color: Colors.white,
       alignment: Alignment.center,
-      child: Text('Here goes my cart page'),
+      child: const CartView(),
     ),
     Container(
       color: Colors.white,
