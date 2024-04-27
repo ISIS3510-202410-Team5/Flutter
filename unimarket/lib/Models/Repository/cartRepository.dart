@@ -25,4 +25,16 @@ class CartRepository {
         .doc(Model().getUserId())
         .set({"1": 1}, SetOptions(merge: true));
   }
+
+  getCart(String uId) async {
+    await _DB.collection("carts").doc(uId).get().then((value) {
+      var valores = value.data();
+      valores?.forEach((key, value) {
+        if (key != "1") {
+          print(key);
+          Model().meterProductoCarrito(key);
+        }
+      });
+    });
+  }
 }

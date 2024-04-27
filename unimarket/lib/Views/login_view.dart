@@ -126,7 +126,6 @@ class _LoginViewState extends State<LoginView> {
       // Aquí va el proceso de verificación con Firebase
 
       if (existingUser) {
-        SearchControllerUnimarket().cargarProductos();
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => BodyView()));
       } else {
