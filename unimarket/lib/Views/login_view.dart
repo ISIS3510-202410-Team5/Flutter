@@ -143,7 +143,7 @@ class _LoginViewState extends State<LoginView> {
                 255, 250, 206, 190), // Example color, change as needed
             child: const Center(
               child: Image(
-                image: AssetImage("assets/imagenes/logo.png"),
+                image: AssetImage("assets/images/logo.png"),
                 height: 100,
                 width: 100,
               ),

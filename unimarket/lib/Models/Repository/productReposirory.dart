@@ -22,7 +22,8 @@ class ProductRepository {
             i.data()["used"],
             i.data()["image"],
             i.data()["sold"],
-            i.data()["views"]);
+            i.data()["views"],
+            i.data()["description"]);
         Model().addProduct(producto);
       }
     });
@@ -42,7 +43,8 @@ class ProductRepository {
                 i.data()["used"],
                 i.data()["image"],
                 i.data()["sold"],
-                i.data()["views"]);
+                i.data()["views"],
+                i.data()["description"]);
             Model().addFilteredProduct(producto, lista);
           }
     });

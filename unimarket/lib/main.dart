@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
             debugShowCheckedModeBanner: false,
             home: const LoginView(),
             //home: const HomeView(),
-            // home: const PublishView(),
+            //home: const PublishView(),
             //home: const SearchView(),
           );
         },

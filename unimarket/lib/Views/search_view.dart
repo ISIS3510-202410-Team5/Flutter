@@ -99,15 +99,6 @@ class _SearchViewState extends State<SearchView> {
     });
   }
 
-  void displayProduct(ProductModel product) {
-    setState(() {});
-    //product.views++;
-    updateTrends(product);
-    //Provider.of<BodyView>(context). = ProductDetail_view(product);
-    Navigator.push(context,
-      MaterialPageRoute(builder: (context) => ProductDetail_view(product)));
-  }
-
   void showFilterDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -362,7 +353,14 @@ class _SearchViewState extends State<SearchView> {
                       Card(
                         color: notifier.getTheme().cardColor,
                         child: InkWell(
-                          onTap: () {},
+                          onTap: () {
+                            Navigator.push(
+                              context, 
+                              MaterialPageRoute(
+                              builder: (context) => ProductDetail_view(displayList[index])
+                              )
+                            ); 
+                          },
                           child: Column(
                             children: [
                               Text(
