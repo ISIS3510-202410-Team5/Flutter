@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:unimarket/Models/model.dart';
+import 'package:unimarket/Models/product_model.dart';
 
 class SearchControllerUnimarket extends ChangeNotifier {
 
@@ -18,6 +19,10 @@ class SearchControllerUnimarket extends ChangeNotifier {
 
   getFilteredProducts(String category, bool use){
     return Model().getFilteredProducts(category, use);
+  }
+
+  incrementViews(ProductModel prod){
+    Model().incrementViews(prod);
   }
 
   cargarProductos() {

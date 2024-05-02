@@ -112,7 +112,7 @@ class _SearchViewState extends State<SearchView> {
     List<ProductModel> prodList = await _searcController.getAllProducts();
     prodList.sort((a,b)=> b.views.compareTo(a.views));
     trendingProductsList = prodList.sublist(0,5);
-    await Future.delayed(const Duration(seconds: 3), (){});
+    //await Future.delayed(const Duration(seconds: 3), (){});
     setState(() {
       trendsReady = true;
     });
@@ -178,6 +178,10 @@ class _SearchViewState extends State<SearchView> {
       isLoadingFiltered = false;
     });
     updateList('', notifier);
+  }
+
+  incrementTrend(ProductModel prod){
+    _searcController.incrementViews(prod);
   }
 
 
@@ -258,7 +262,16 @@ class _SearchViewState extends State<SearchView> {
                           child: Card(
                             color: notifier.getTheme().cardColor,
                             child: InkWell(
-                              onTap: () {},
+                              onTap: () async {
+                                Navigator.push(
+                                  context, 
+                                  MaterialPageRoute(
+                                    builder: (context) => ProductDetail_view(trendingProductsList[index])
+                                  )
+                                ); 
+                                await incrementTrend(trendingProductsList[index]);
+                                filterTrendingProducts2();
+                              },
                               child: Column(
                                 children: [
                                   Text(
@@ -451,13 +464,15 @@ class _SearchViewState extends State<SearchView> {
                                     : Card(
                                     color: notifier.getTheme().cardColor,
                                     child: InkWell(
-                                      onTap: () {
+                                      onTap: () async {
                                         Navigator.push(
                                           context, 
                                           MaterialPageRoute(
                                           builder: (context) => ProductDetail_view(displayList[index])
                                           )
                                         ); 
+                                        await incrementTrend(trendingProductsList[index]);
+                                        filterTrendingProducts2();
                                       },
                                       child: Column(
                                         children: [
@@ -555,13 +570,15 @@ class _SearchViewState extends State<SearchView> {
                                     : Card(
                                     color: notifier.getTheme().cardColor,
                                     child: InkWell(
-                                      onTap: () {
+                                      onTap: () async {
                                         Navigator.push(
                                           context, 
                                           MaterialPageRoute(
                                           builder: (context) => ProductDetail_view(displayList[index])
                                           )
                                         ); 
+                                        await incrementTrend(trendingProductsList[index]);
+                                        filterTrendingProducts2();
                                       },
                                       child: Column(
                                         children: [

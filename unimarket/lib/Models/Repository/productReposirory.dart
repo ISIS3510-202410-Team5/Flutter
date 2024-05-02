@@ -23,7 +23,8 @@ class ProductRepository {
             i.data()["image"],
             i.data()["sold"],
             i.data()["views"],
-            i.data()["description"]);
+            i.data()["description"],
+            i.data()["sellerId"]);
         Model().addProduct(producto);
       }
     });
@@ -44,7 +45,9 @@ class ProductRepository {
                 i.data()["image"],
                 i.data()["sold"],
                 i.data()["views"],
-                i.data()["description"]);
+                i.data()["description"],
+                i.data()["sellerId"]
+              );
             Model().addFilteredProduct(producto, lista);
           }
     });
@@ -63,9 +66,24 @@ class ProductRepository {
                 i.data()["image"],
                 i.data()["sold"],
                 i.data()["views"],
-                i.data()["description"]);
+                i.data()["description"],
+                i.data()["sellerId"]
+              );
             Model().addAProduct(producto, lista);
           }
     });
+  }
+
+  Future incrementView(ProductModel prod) async {
+
+    int actualViews = 0;
+
+    await FirebaseFirestore.instance.collection("products").doc(prod.id).get().then((value) => {
+      actualViews = value.data()!['views']
+    });
+
+    actualViews++;
+
+    await FirebaseFirestore.instance.collection("products").doc(prod.id).update({'views':actualViews});
   }
 }

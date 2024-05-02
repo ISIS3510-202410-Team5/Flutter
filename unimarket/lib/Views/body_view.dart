@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shake/shake.dart';
@@ -12,7 +11,7 @@ import 'package:unimarket/nav_bar.dart';
 import 'package:noise_meter/noise_meter.dart';
 
 class BodyView extends StatefulWidget {
-  BodyView({super.key});
+  const BodyView({super.key});
 
   @override
   State<BodyView> createState() => _BodyViewState();

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:unimarket/Controllers/publish_controller.dart';
 import 'package:unimarket/Models/product_model.dart';
@@ -51,10 +52,63 @@ class _PublishViewState extends State<PublishView> {
   //For the controller
   late PublishController _publishController;
 
+  bool isUploaded = false;
+
   @override
   void initState() {
     _publishController = PublishController();
     super.initState();
+  }
+
+  createProduct(String name, String category, int price, bool use, String description) async {
+
+    ProductModel producto = ProductModel(null, name, category, price, use, 'null', false, 0, description, 'null');
+    await _publishController.addProductToCatalog(producto, selectedImage!);
+    //await Future.delayed(const Duration(seconds: 10), (){});
+    
+    setState(() {
+      isUploaded = true;
+    });
+  }
+
+  void showLoadingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Provider.of<ThemeNotifier>(context).getTheme().cardColor,
+          content: LoadingAnimationWidget.newtonCradle(color: Colors.black, size: 90),
+        );
+      },
+    );
+  }
+
+  void showUploadedDialog(BuildContext context) {
+
+    Navigator.of(context).pop();
+    
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Provider.of<ThemeNotifier>(context).getTheme().cardColor, // Set background color to green
+          title: const Text('¡¡Success!!'),
+          content: const Text(
+              'Your product was successfully added to the database. Go and search it in the search view!!'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  isUploaded = false;
+                });
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -87,7 +141,7 @@ class _PublishViewState extends State<PublishView> {
                 margin:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                 child: Padding(
-                  padding: EdgeInsets.all(18.0),
+                  padding: const EdgeInsets.all(18.0),
                   child: Column(
                     children: [
                       Stack(
@@ -332,19 +386,29 @@ class _PublishViewState extends State<PublishView> {
                                           Colors.deepOrange),
                                 ),
                                 onPressed: () async {
-                                  ProductModel producto = ProductModel(
-                                      "100",
-                                      _publishController.controllerName.text,
-                                      _publishController.iconController.text,
-                                      int.parse(_publishController
-                                          .controllerPrice.text),
-                                      false,
-                                      "img",
-                                      false,
-                                      0,
-                                      "description");
-                                  await _publishController.addProductToCatalog(
-                                      producto, selectedImage!);
+
+                                  showLoadingDialog(context);
+
+                                  await createProduct(
+                                    _publishController.controllerName.text, 
+                                    selectedIcon!.label, 
+                                    int.parse(_publishController.controllerPrice.text), 
+                                    selectedColor!.label == 'Never used' ? false : true, 
+                                    _publishController.controllerDescription.text
+                                  );
+                                  _publishController.controllerName.clear();
+                                  _publishController.useController.clear();
+                                  _publishController.iconController.clear();
+                                  _publishController.controllerPrice.clear();
+                                  _publishController.controllerDescription.clear();
+
+                                  setState(() {
+                                    colorIcon = Colors.deepOrange;
+                                    iconCategory = Icons.question_mark;
+                                    _image = null;
+                                  });
+
+                                  showUploadedDialog(context);
                                 },
                                 child: const Text(
                                   'Publish product',

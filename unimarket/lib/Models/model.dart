@@ -62,6 +62,10 @@ class Model {
     //filteredProducts.add(product);
   }
 
+  incrementViews(ProductModel prod){
+    ProductRepository().incrementView(prod);
+  }
+
 
 
 
