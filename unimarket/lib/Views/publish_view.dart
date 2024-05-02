@@ -341,7 +341,8 @@ class _PublishViewState extends State<PublishView> {
                                       false,
                                       "img",
                                       false,
-                                      0);
+                                      0,
+                                      "description");
                                   await _publishController.addProductToCatalog(
                                       producto, selectedImage!);
                                 },

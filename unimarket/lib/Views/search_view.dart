@@ -1,11 +1,15 @@
 import 'dart:isolate';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unimarket/Controllers/search_controllerUnimarket.dart';
 import 'package:unimarket/Models/product_model.dart';
 import 'package:unimarket/Views/productDetail_view.dart';
 import 'package:unimarket/resources/connectivity_service.dart';
+import 'package:unimarket/resources/shimmer_effect.dart';
 import 'package:unimarket/theme.dart';
+import 'package:unimarket/firebase_options.dart';
+
 
 enum ColorLabel {
   newProduct('Never used', Colors.yellow),
@@ -35,6 +39,20 @@ class SearchView extends StatefulWidget {
   State<SearchView> createState() => _SearchViewState();
 }
 
+void isolateFunction(List arguments) async {
+
+  await Firebase.initializeApp(
+    name: 'unimarket',
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  
+  List<ProductModel> prodList = await arguments[1].getAllProducts();
+  prodList.sort((a,b)=> b.views.compareTo(a.views));
+  prodList.sublist(0,5);
+
+  arguments[0].send(prodList);
+}
+
 class _SearchViewState extends State<SearchView> {
 
   late final SearchControllerUnimarket _searcController;
@@ -42,13 +60,20 @@ class _SearchViewState extends State<SearchView> {
   late List<ProductModel> filteredList;
   late List<ProductModel> displayList;
   List<ProductModel> trendingProductsList = <ProductModel>[];
+  late Future<List<ProductModel>> trendingList;
+
+  bool isLoadingFiltered = false;
+  bool isLoadingTrends = false;
+  bool isSearchDone = false;
+  bool trendsReady = false;
 
   ColorLabel? selectedColor;
   IconLabel? selectedIcon;
   Color colorIcon = Colors.deepOrange;
   IconData iconCategory = Icons.question_mark;
+
   bool filtersAplied = false;
-  bool searchEnabled = true;
+  bool searchEnabled = true; 
   
 
   @override
@@ -57,8 +82,14 @@ class _SearchViewState extends State<SearchView> {
     _searcController = SearchControllerUnimarket();
     displayList = <ProductModel>[];
     filteredList = <ProductModel>[];
-    //getAllProducts().then((value){getTrendingProducts();});
+    filterTrendingProducts2();
     //filterTrendingProducts();
+    //filterTrendingProducts().then((value) => setState(() {
+      //trendsReady = true;
+    //}));
+    
+    //getAllProducts().then((value){getTrendingProducts();});
+    
     //getAllProducts();
   }
 
@@ -67,20 +98,26 @@ class _SearchViewState extends State<SearchView> {
     return productsList;
   }
 
-  Future<void> getTrendingProducts() async{
-    if(productsList.isNotEmpty){
-      trendingProductsList = productsList;
-      trendingProductsList.sort(((a, b) => b.views.compareTo(a.views)));
-      trendingProductsList = trendingProductsList.sublist(0,5);
-    }
-  }
-  
 
-  Future<void> filterTrendingProducts() async {
-    await Isolate.run(() {
-      _searcController.getProducts().sort(((a, b) => b.views.compareTo(a.views))).sublist(0,5);
+  filterTrendingProducts() async {
+
+    ReceivePort receivePort = ReceivePort();
+    Isolate.spawn(isolateFunction, [receivePort.sendPort, _searcController]);
+
+    trendingProductsList = await receivePort.first;
+  }
+
+  filterTrendingProducts2() async {
+
+    List<ProductModel> prodList = await _searcController.getAllProducts();
+    prodList.sort((a,b)=> b.views.compareTo(a.views));
+    trendingProductsList = prodList.sublist(0,5);
+    await Future.delayed(const Duration(seconds: 3), (){});
+    setState(() {
+      trendsReady = true;
     });
   }
+
 
   void updateList(String value, ThemeNotifier notifier) {
     setState(() {
@@ -97,15 +134,6 @@ class _SearchViewState extends State<SearchView> {
       trendingProductsList.sort(((a, b) => b.views.compareTo(a.views)));
       trendingProductsList = trendingProductsList.sublist(0, 5);
     });
-  }
-
-  void displayProduct(ProductModel product) {
-    setState(() {});
-    //product.views++;
-    updateTrends(product);
-    //Provider.of<BodyView>(context). = ProductDetail_view(product);
-    Navigator.push(context,
-      MaterialPageRoute(builder: (context) => ProductDetail_view(product)));
   }
 
   void showFilterDialog(BuildContext context) {
@@ -132,13 +160,22 @@ class _SearchViewState extends State<SearchView> {
 
 
   requestFilteredProducts(ThemeNotifier notifier) async {
+    setState(() {
+      isSearchDone = true;
+      isLoadingFiltered = true;
+    });
+
     bool used;
     selectedColor!.label == 'Never used' ? used = false : used = true;
     List<ProductModel> listaProds = await _searcController.getFilteredProducts(selectedIcon!.label, used);
+
+    //await Future.delayed(const Duration(seconds: 5), (){});
+
     setState(() {
       filteredList = listaProds;
       filtersAplied = true;
       searchEnabled = true;
+      isLoadingFiltered = false;
     });
     updateList('', notifier);
   }
@@ -209,56 +246,63 @@ class _SearchViewState extends State<SearchView> {
 
                 Container(
                   width: 330,
-                  height: 160,
+                  height: 180,
                   child: ListView.builder(
                     scrollDirection: Axis.horizontal,
                     padding: const EdgeInsets.all(8),
-                    itemCount: trendingProductsList.length,
+                    itemCount: trendsReady ? trendingProductsList.length : 5,
                     itemBuilder: (context, index) => 
-
-                    Container(
-                      width: 120,
-                      child: Card(
-                      color: notifier.getTheme().cardColor,
-                      child: InkWell(
-                        onTap: () {},
-                        child: Column(
-                          children: [
-                            Text(
-                              trendingProductsList[index].name,
-                              style: const TextStyle(
-                                fontSize: 12.0,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'Roboto',
+                      trendsReady ? 
+                        Container(
+                          width: 120,
+                          child: Card(
+                            color: notifier.getTheme().cardColor,
+                            child: InkWell(
+                              onTap: () {},
+                              child: Column(
+                                children: [
+                                  Text(
+                                    trendingProductsList[index].name,
+                                    style: const TextStyle(
+                                      fontSize: 12.0,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Roboto',
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 4.0),
+                                  const Divider(
+                                    height: 1,
+                                    thickness: 2,
+                                    color: Colors.deepOrange,
+                                    indent: 10,
+                                    endIndent: 10,
+                                  ),
+                                  const SizedBox(height: 7.0),
+                                  CircleAvatar(
+                                    radius: 40,
+                                    backgroundImage: NetworkImage(trendingProductsList[index].image),
+                                  ),
+                                  const SizedBox(height: 7,),
+                                  Text("Price: ${trendingProductsList[index].price}",
+                                    style: const TextStyle(
+                                      fontSize: 10.0,
+                                      fontWeight: FontWeight.bold,
+                                      fontFamily: 'Roboto'
+                                    )
+                                  ),
+                                ],
                               ),
-                              textAlign: TextAlign.center,
                             ),
-                            const SizedBox(height: 4.0),
-                            const Divider(
-                              height: 1,
-                              thickness: 2,
-                              color: Colors.deepOrange,
-                              indent: 10,
-                              endIndent: 10,
-                            ),
-                            const SizedBox(height: 7.0),
-                            CircleAvatar(
-                              radius: 40,
-                              backgroundImage: NetworkImage(trendingProductsList[index].image),
-                            ),
-                            const SizedBox(height: 7,),
-                            Text("Price: ${trendingProductsList[index].price}",
-                              style: const TextStyle(
-                                fontSize: 10.0,
-                                fontWeight: FontWeight.bold,
-                                fontFamily: 'Roboto'
-                              )
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    )
+                          ),
+                        )
+                      : ShimmerWidget.circular(
+                            width: 110, 
+                            height: 15, 
+                            shapeBorder: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(15)
+                            )
+                          ),
                   ),
                 ),
                 
@@ -347,61 +391,218 @@ class _SearchViewState extends State<SearchView> {
 
                 const SizedBox(height: 20,),
 
+                const SizedBox(height: 10,),
+
                 Expanded(
                   child: (networkStatus == NetworkStatus.online) ?
-                    ((displayList.isEmpty)? const Text("No Results"):
-                    GridView.builder(
-                      itemCount: displayList.length,
-                      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
-                        maxCrossAxisExtent: 300,
-                        mainAxisExtent: 220,
-                        crossAxisSpacing: 10,
-                        mainAxisSpacing: 20
-                      ),
-                      itemBuilder: (context, index) => 
-                      Card(
-                        color: notifier.getTheme().cardColor,
-                        child: InkWell(
-                          onTap: () {},
-                          child: Column(
-                            children: [
-                              Text(
-                                displayList[index].name,
-                                style: const TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Roboto',
+                    (!isSearchDone ? 
+                      const Align(
+                        alignment: Alignment.center,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image(image: AssetImage('assets/images/search_something.png'), height: 160, width: 150,),
+                            SizedBox(height: 10,),
+                            Text('Search Something...',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold, 
+                                fontSize: 17
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                      : ((displayList.isEmpty && !isLoadingFiltered) ? 
+                              const Align(
+                                alignment: Alignment.center,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image(image: AssetImage('assets/images/no_search_results.png'), height: 160, width: 150,),
+                                    SizedBox(height: 10,),
+                                    Text('No results. Try again',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold, 
+                                        fontSize: 17
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                                textAlign: TextAlign.center,
-                              ),
-                              const SizedBox(height: 4.0),
-                              const Divider(
-                                height: 1,
-                                thickness: 2,
-                                color: Colors.deepOrange,
-                                indent: 10,
-                                endIndent: 10,
-                              ),
-                              const SizedBox(height: 10.0),
+                              )
+                              : GridView.builder(
+                                  itemCount: isLoadingFiltered ? 4 : displayList.length,
+                                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                                    maxCrossAxisExtent: 300,
+                                    mainAxisExtent: 220,
+                                    crossAxisSpacing: 10,
+                                    mainAxisSpacing: 20
+                                  ),
+                                  itemBuilder: (context, index) => 
+                                    (isLoadingFiltered) ? 
+                                      ShimmerWidget.circular(
+                                        width: 30, 
+                                        height: 20, 
+                                        shapeBorder: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(15)
+                                        )
+                                      ) 
+                                    : Card(
+                                    color: notifier.getTheme().cardColor,
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context, 
+                                          MaterialPageRoute(
+                                          builder: (context) => ProductDetail_view(displayList[index])
+                                          )
+                                        ); 
+                                      },
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            displayList[index].name,
+                                            style: const TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily: 'Roboto',
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          const SizedBox(height: 4.0),
+                                          const Divider(
+                                            height: 1,
+                                            thickness: 2,
+                                            color: Colors.deepOrange,
+                                            indent: 10,
+                                            endIndent: 10,
+                                          ),
+                                          const SizedBox(height: 10.0),
 
-                              CircleAvatar(
-                                radius: 60,
-                                backgroundImage: NetworkImage(displayList[index].image),
-                              ),
-                              const SizedBox(height: 10,),
-                              Text("Price: ${displayList[index].price}",
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                  fontFamily: 'Roboto'
+                                          CircleAvatar(
+                                            radius: 60,
+                                            backgroundImage: NetworkImage(displayList[index].image),
+                                          ),
+                                          const SizedBox(height: 10,),
+                                          Text("Price: ${displayList[index].price}",
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily: 'Roboto'
+                                            )
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
                                 )
+                            )
+                    ) 
+                    : (filteredList.isEmpty ? 
+                        const Align(
+                          alignment: Alignment.center,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image(image: AssetImage('assets/images/no_internet_connection.png'), height: 160, width: 150,),
+                              SizedBox(height: 10,),
+                              Text('No internet connection',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold, 
+                                  fontSize: 17
+                                ),
                               ),
                             ],
                           ),
-                        ),
-                      ),
-                    )
-                  ) : (displayList.isEmpty ? const Text('No results :(') : const Text('No connection') )
+                        )
+                        : ((displayList.isEmpty && !isLoadingFiltered) ? 
+                              const Align(
+                                alignment: Alignment.center,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Image(image: AssetImage('assets/images/no_search_results.png'), height: 160, width: 150,),
+                                    SizedBox(height: 10,),
+                                    Text('No results. Try again',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold, 
+                                        fontSize: 17
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                              : GridView.builder(
+                                  itemCount: isLoadingFiltered ? 4 : displayList.length,
+                                  gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+                                    maxCrossAxisExtent: 300,
+                                    mainAxisExtent: 220,
+                                    crossAxisSpacing: 10,
+                                    mainAxisSpacing: 20
+                                  ),
+                                  itemBuilder: (context, index) => 
+                                    (isLoadingFiltered) ? 
+                                      ShimmerWidget.circular(
+                                        width: 30, 
+                                        height: 20, 
+                                        shapeBorder: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(15)
+                                        )
+                                      ) 
+                                    : Card(
+                                    color: notifier.getTheme().cardColor,
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context, 
+                                          MaterialPageRoute(
+                                          builder: (context) => ProductDetail_view(displayList[index])
+                                          )
+                                        ); 
+                                      },
+                                      child: Column(
+                                        children: [
+                                          Text(
+                                            displayList[index].name,
+                                            style: const TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily: 'Roboto',
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          const SizedBox(height: 4.0),
+                                          const Divider(
+                                            height: 1,
+                                            thickness: 2,
+                                            color: Colors.deepOrange,
+                                            indent: 10,
+                                            endIndent: 10,
+                                          ),
+                                          const SizedBox(height: 10.0),
+
+                                          CircleAvatar(
+                                            radius: 60,
+                                            backgroundImage: NetworkImage(displayList[index].image),
+                                          ),
+                                          const SizedBox(height: 10,),
+                                          Text("Price: ${displayList[index].price}",
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                              fontFamily: 'Roboto'
+                                            )
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                )
+                            )
+                      )
                 ),
               ],
             ),
