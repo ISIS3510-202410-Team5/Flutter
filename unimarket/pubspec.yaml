@@ -46,6 +46,9 @@ dependencies:
   shared_preferences: ^2.2.3
   noise_meter: ^5.0.2
   permission_handler: ^11.3.1
+  connectivity_plus: ^6.0.3
+  shimmer: ^3.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -70,7 +73,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - assets/imagenes/
+    - assets/images/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

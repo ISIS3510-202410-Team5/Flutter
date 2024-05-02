@@ -5,10 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:light/light.dart';
 import 'package:provider/provider.dart';
 import 'package:unimarket/Controllers/home_controller.dart';
+import 'package:unimarket/Views/body_view.dart';
 import 'package:unimarket/Views/search_view.dart';
 import 'package:flutter/services.dart';
-import 'package:unimarket/main.dart';
 import 'package:unimarket/theme.dart';
+import 'package:unimarket/resources/connectivity_service.dart';
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -18,6 +19,8 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
+  StreamController<int> _controller = StreamController<int>();
+
   late HomeController _homeController;
   Light? _light;
   StreamSubscription? _subscription;
@@ -123,7 +126,7 @@ class _HomeViewState extends State<HomeView> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Colors.white, // Set background color to green
+          backgroundColor: Colors.white,
           title: const Text('Dark Theme Suggestion'),
           content: const Text(
               'We have noticed that you are in a place without too much light. Would you like to change to the Dark Mode?'),
@@ -178,9 +181,38 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
+  void showNoConnectionDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Provider.of<ThemeNotifier>(context).getTheme().cardColor, // Set background color to green
+          title: const Text('No internet connection'),
+          content: const Text(
+              'Seems to be that your device has no connection in this moment. Please check your connection and try again'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Accept'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void setCategorySearch(String category){
+    
+  }
+
   @override
   Widget build(BuildContext context) {
     isDarkTheme = Provider.of<ThemeNotifier>(context).darkTheme;
+    var networkStatus = Provider.of<NetworkStatus>(context);
+
+    (networkStatus == NetworkStatus.offline) ? showNoConnectionDialog(context): print("There is connection");
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
@@ -343,7 +375,7 @@ class _HomeViewState extends State<HomeView> {
                                   color: notifier.getTheme().dividerColor,
                                   child: InkWell(
                                       onTap: () {
-                                        print('Holsiok');
+                                        setCategorySearch("Art Materials");
                                       },
                                       child: Column(
                                         children: [
@@ -366,7 +398,8 @@ class _HomeViewState extends State<HomeView> {
                                             ),
                                           ),
                                         ],
-                                      )),
+                                      )
+                                    ),
                                 ),
                                 const Text(
                                   "Art Materials",
@@ -383,7 +416,7 @@ class _HomeViewState extends State<HomeView> {
                                   color: notifier.getTheme().dividerColor,
                                   child: InkWell(
                                       onTap: () {
-                                        print('Holsiok');
+                                        setCategorySearch("Audiovisuals");
                                       },
                                       child: Column(
                                         children: [
@@ -428,7 +461,7 @@ class _HomeViewState extends State<HomeView> {
                                   color: notifier.getTheme().dividerColor,
                                   child: InkWell(
                                       onTap: () {
-                                        print('Holsiok');
+                                        setCategorySearch("Security");
                                       },
                                       child: Column(
                                         children: [
@@ -468,7 +501,7 @@ class _HomeViewState extends State<HomeView> {
                                   color: notifier.getTheme().dividerColor,
                                   child: InkWell(
                                       onTap: () {
-                                        print('Holsiok');
+                                        setCategorySearch("Books");
                                       },
                                       child: Column(
                                         children: [
@@ -513,7 +546,7 @@ class _HomeViewState extends State<HomeView> {
                                   color: notifier.getTheme().dividerColor,
                                   child: InkWell(
                                       onTap: () {
-                                        print('Holsiok');
+                                        setCategorySearch("Hardware");
                                       },
                                       child: Column(
                                         children: [

@@ -46,6 +46,7 @@ class ThemeNotifier extends ChangeNotifier{
     _darkTheme = !_darkTheme;
     _darkTheme ? _actualThemeData = dark : _actualThemeData = light;
     _saveToPrefs();
+
     notifyListeners();
   }
 
@@ -53,6 +54,7 @@ class ThemeNotifier extends ChangeNotifier{
     prefs = await _prefs;
     _darkTheme = prefs.getBool(key) ?? false;
     _darkTheme ? _actualThemeData = dark : _actualThemeData = light;
+    print("Initial theme is dark: $_darkTheme");
     notifyListeners();
   }
 

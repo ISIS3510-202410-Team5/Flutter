@@ -12,7 +12,7 @@ import 'package:unimarket/nav_bar.dart';
 import 'package:noise_meter/noise_meter.dart';
 
 class BodyView extends StatefulWidget {
-  const BodyView({super.key});
+  BodyView({super.key});
 
   @override
   State<BodyView> createState() => _BodyViewState();
@@ -102,6 +102,12 @@ class _BodyViewState extends State<BodyView> {
 
   int currentIndex = 0;
 
+  void setCurrentIndex(int index){
+    setState(() {
+      currentIndex = index;
+    });
+  }
+
   var pageViewList = [
     Container(
       color: Colors.white,
@@ -142,6 +148,7 @@ class _BodyViewState extends State<BodyView> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       bottomNavigationBar: NavBar(
         onDestinationSelected: (int value) {
