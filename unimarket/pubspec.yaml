@@ -44,7 +44,8 @@ dependencies:
   firebase_storage: ^11.7.2
   light: ^3.0.1
   shared_preferences: ^2.2.3
-
+  noise_meter: ^5.0.2
+  permission_handler: ^11.3.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

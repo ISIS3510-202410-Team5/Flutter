@@ -63,7 +63,7 @@ class Model {
     ProductModel producto = getProductById(idProducto, "Products");
     if (!productosCarrito.contains(producto)) {
       productosCarrito.add(producto);
-      cartPrice += producto.price;
+      cartPrice = cartPrice + producto.price;
     }
   }
 
