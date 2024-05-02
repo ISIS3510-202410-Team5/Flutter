@@ -12,7 +12,7 @@ class Model {
   factory Model() => single;
   Model._();
 
-  List<ProductModel> getProducts() {
+  getProducts() {
     return productos;
   }
 
@@ -38,6 +38,19 @@ class Model {
     productos.add(p);
   }
 
+  
+
+
+  getAllProducts() async {
+    List<ProductModel> lista = <ProductModel>[];
+    await ProductRepository().getAllProducts(lista);
+    return lista;
+  }
+
+  addAProduct(ProductModel product, List<ProductModel> lista) {
+    lista.add(product);
+  }
+
   getFilteredProducts(String category, bool use) async {
     List<ProductModel> lista = <ProductModel>[];
     await ProductRepository().getFilteredProducts(category, use, lista);
@@ -48,6 +61,9 @@ class Model {
     lista.add(product);
     //filteredProducts.add(product);
   }
+
+
+
 
   void addProductToCart(String? pId) {
     CartRepository().addToCart(pId);

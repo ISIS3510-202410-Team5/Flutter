@@ -3,7 +3,6 @@ import 'package:shake/shake.dart';
 import 'package:unimarket/Views/cart_view.dart';
 import 'package:unimarket/Views/chat_view.dart';
 import 'package:unimarket/Views/home_view.dart';
-import 'package:unimarket/Views/productDetail_view.dart';
 import 'package:unimarket/Views/publish_view.dart';
 import 'package:unimarket/Views/search_view.dart';
 import 'package:unimarket/nav_bar.dart';
@@ -11,23 +10,12 @@ import 'package:unimarket/nav_bar.dart';
 class BodyView extends StatefulWidget {
   BodyView({super.key});
 
-  late Widget currentView;
-
-  set curreView(Widget newViw) {
-    currentView = newViw;
-  }
-
   @override
   State<BodyView> createState() => _BodyViewState();
 }
 
 class _BodyViewState extends State<BodyView> {
   int currentIndex = 0;
-  late Widget currentView;
-
-  void setCurrentView(Widget newWidget){
-    currentView = newWidget;
-  }
 
   void setCurrentIndex(int index){
     setState(() {
@@ -81,12 +69,11 @@ class _BodyViewState extends State<BodyView> {
         onDestinationSelected: (int value) {
           setState(() {
             currentIndex = value;
-            currentView = pageViewList[currentIndex];
           });
         },
         selectedIndex: currentIndex,
       ),
-      body: currentView,
+      body: pageViewList[currentIndex],
     );
   }
 
