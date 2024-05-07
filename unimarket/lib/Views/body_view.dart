@@ -5,7 +5,7 @@ import 'package:shake/shake.dart';
 import 'package:unimarket/Views/cart_view.dart';
 import 'package:unimarket/Views/chat_view.dart';
 import 'package:unimarket/Views/home_view.dart';
-import 'package:unimarket/Views/publish_view.dart';
+import 'package:unimarket/Views/publish_view/publish_view.dart';
 import 'package:unimarket/Views/search_view.dart';
 import 'package:unimarket/nav_bar.dart';
 import 'package:noise_meter/noise_meter.dart';
