@@ -1,15 +1,26 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:light/light.dart';
 import 'package:provider/provider.dart';
 import 'package:unimarket/Controllers/home_controller.dart';
-import 'package:unimarket/Views/body_view.dart';
-import 'package:unimarket/Views/search_view.dart';
+import 'package:unimarket/Views/search_view/search_view.dart';
 import 'package:flutter/services.dart';
 import 'package:unimarket/theme.dart';
 import 'package:unimarket/resources/connectivity_service.dart';
+
+enum IconLabel {
+  paint('Art Materials', Icons.format_paint),
+  audiovisuals('Audiovisuals', Icons.camera_rounded),
+  security('Security', Icons.security_rounded),
+  books('Books', Icons.book),
+  hardware('Hardware', Icons.computer_rounded),
+  noCategory('None', Icons.error);
+
+  const IconLabel(this.label, this.icon);
+  final String label;
+  final IconData icon;
+}
 
 class HomeView extends StatefulWidget {
   const HomeView({super.key});
@@ -19,7 +30,7 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeViewState extends State<HomeView> {
-  StreamController<int> _controller = StreamController<int>();
+  final StreamController<int> _controller = StreamController<int>();
 
   late HomeController _homeController;
   Light? _light;
@@ -28,6 +39,7 @@ class _HomeViewState extends State<HomeView> {
   String? _luxString;
   bool toggle = true;
   bool isDarkTheme = false;
+  bool isConnected = true;
   late bool sessionThemeConfigured;
 
   void onData(int luxValue) async {
@@ -80,9 +92,12 @@ class _HomeViewState extends State<HomeView> {
   int numProds = 0;
   int usuariosN = 0;
 
-  void searchSelection() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const SearchView()));
+  searchSelection() async {
+    isConnected ? 
+      Navigator.push(
+        context, MaterialPageRoute(builder: (context) => SearchView(categoryIndex: 5))
+      ) 
+      : showNoConnectionDialog(context, 5);
   }
 
   List data = [];
@@ -129,7 +144,8 @@ class _HomeViewState extends State<HomeView> {
           backgroundColor: Colors.white,
           title: const Text('Dark Theme Suggestion'),
           content: const Text(
-              'We have noticed that you are in a place without too much light. Would you like to change to the Dark Mode?'),
+            'We have noticed that you are in a place without too much light. Would you like to change to the Dark Mode?'
+          ),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -139,8 +155,7 @@ class _HomeViewState extends State<HomeView> {
             ),
             TextButton(
               onPressed: () {
-                Provider.of<ThemeNotifier>(context, listen: false)
-                    .toogleTheme();
+                Provider.of<ThemeNotifier>(context, listen: false).toogleTheme();
                 Navigator.of(context).pop();
               },
               child: const Text('Accept'),
@@ -156,10 +171,11 @@ class _HomeViewState extends State<HomeView> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Colors.grey[800], // Set background color to green
+          backgroundColor: Colors.grey[800],
           title: const Text('Light Theme Suggestion'),
           content: const Text(
-              'We have noticed that you are in a place with a lot of light. Would you like to change to the Light Mode?'),
+            'We have noticed that you are in a place with a lot of light. Would you like to change to the Light Mode?'
+          ),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -169,8 +185,7 @@ class _HomeViewState extends State<HomeView> {
             ),
             TextButton(
               onPressed: () {
-                Provider.of<ThemeNotifier>(context, listen: false)
-                    .toogleTheme();
+                Provider.of<ThemeNotifier>(context, listen: false).toogleTheme();
                 Navigator.of(context).pop();
               },
               child: const Text('Accept'),
@@ -181,19 +196,23 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  void showNoConnectionDialog(BuildContext context) {
+  showNoConnectionDialog(BuildContext context, int categoryIndex) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Provider.of<ThemeNotifier>(context).getTheme().cardColor, // Set background color to green
+          backgroundColor: Provider.of<ThemeNotifier>(context).getTheme().cardColor,
           title: const Text('No internet connection'),
           content: const Text(
-              'Seems to be that your device has no connection in this moment. Please check your connection and try again'),
+            'Seems to be that your device has no connection in this moment. You will be redirected to the search view but you wont be able to do a search'
+          ),
           actions: <Widget>[
             TextButton(
               onPressed: () {
                 Navigator.of(context).pop();
+                Navigator.push(
+                  context, MaterialPageRoute(builder: (context) => SearchView(categoryIndex: categoryIndex))
+                );
               },
               child: const Text('Accept'),
             ),
@@ -203,8 +222,12 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  void setCategorySearch(String category){
-    
+  void setCategorySearch(int categoryIndex){
+    isConnected ? 
+      Navigator.push(
+        context, MaterialPageRoute(builder: (context) => SearchView(categoryIndex: categoryIndex))
+      ) 
+      : showNoConnectionDialog(context, categoryIndex);
   }
 
   @override
@@ -212,15 +235,14 @@ class _HomeViewState extends State<HomeView> {
     isDarkTheme = Provider.of<ThemeNotifier>(context).darkTheme;
     var networkStatus = Provider.of<NetworkStatus>(context);
 
-    (networkStatus == NetworkStatus.offline) ? showNoConnectionDialog(context): print("There is connection");
+    networkStatus == NetworkStatus.offline ? isConnected = false : isConnected = true;
 
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: ListView(
         children: [
-          const SizedBox(
-            height: 20,
-          ),
+          const SizedBox(height: 20,),
+
           const Align(
             alignment: Alignment.center,
             child: Text(
@@ -228,6 +250,7 @@ class _HomeViewState extends State<HomeView> {
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
           ),
+
           const Divider(
             height: 5,
             thickness: 3,
@@ -235,9 +258,9 @@ class _HomeViewState extends State<HomeView> {
             endIndent: 50,
             color: Colors.deepOrange,
           ),
-          const SizedBox(
-            height: 15,
-          ),
+
+          const SizedBox(height: 15,),
+
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             padding: const EdgeInsets.all(10),
@@ -256,7 +279,7 @@ class _HomeViewState extends State<HomeView> {
                     fontSize: 16,
                   ),
                 ),
-                // Replace the value of usersCount with your variable
+                
                 Text(
                   usuariosN.toString(),
                   style: const TextStyle(
@@ -268,6 +291,7 @@ class _HomeViewState extends State<HomeView> {
               ],
             ),
           ),
+
           Container(
             margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             padding: const EdgeInsets.all(10),
@@ -286,7 +310,7 @@ class _HomeViewState extends State<HomeView> {
                     fontSize: 16,
                   ),
                 ),
-                // Replace the value of productsCount with your variable
+                
                 Text(
                   numProds.toString(),
                   style: const TextStyle(
@@ -298,14 +322,13 @@ class _HomeViewState extends State<HomeView> {
               ],
             ),
           ),
-          const SizedBox(
-            height: 15,
-          ),
+
+          const SizedBox(height: 15,),
+
           Row(
             children: [
-              const SizedBox(
-                width: 30,
-              ),
+              const SizedBox(width: 30,),
+
               SizedBox(
                 height: 50,
                 width: 300,
@@ -320,8 +343,8 @@ class _HomeViewState extends State<HomeView> {
                   decoration: InputDecoration(
                     filled: true,
                     fillColor: Provider.of<ThemeNotifier>(context)
-                        .getTheme()
-                        .cardColor,
+                      .getTheme()
+                      .cardColor,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(60.0),
                       borderSide: BorderSide.none,
@@ -331,260 +354,264 @@ class _HomeViewState extends State<HomeView> {
                   ),
                 ),
               ),
-              const SizedBox(
-                width: 30,
-              )
+              const SizedBox(width: 30,),
             ],
           ),
           Consumer<ThemeNotifier>(
-              builder: (context, notifier, child) => Card(
-                    margin: const EdgeInsets.all(20.0),
-                    color: notifier.getTheme().cardColor,
-                    child: Column(
+            builder: (context, notifier, child) => 
+              Card(
+                margin: const EdgeInsets.all(20.0),
+                color: notifier.getTheme().cardColor,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 10,),
+
+                    const Row(
                       children: [
-                        const SizedBox(
-                          height: 10,
-                        ),
-                        const Row(
-                          children: [
-                            SizedBox(
-                              width: 40,
-                            ),
-                            Text(
-                              "What are you looking for?",
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        ),
-                        const Divider(
-                          thickness: 3,
-                          color: Colors.grey,
-                          indent: 30,
-                          endIndent: 30,
-                        ),
-                        const SizedBox(
-                          height: 40,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Column(
-                              children: [
-                                Card(
-                                  color: notifier.getTheme().dividerColor,
-                                  child: InkWell(
-                                      onTap: () {
-                                        setCategorySearch("Art Materials");
-                                      },
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              border: Border.all(
-                                                  color: Colors.deepOrange,
-                                                  width: 5),
-                                            ),
-                                            child: Column(
-                                              children: [
-                                                Icon(Icons.format_paint,
-                                                    size: 65,
-                                                    color: notifier
-                                                        .getTheme()
-                                                        .hintColor),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      )
-                                    ),
-                                ),
-                                const Text(
-                                  "Art Materials",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              width: 60,
-                            ),
-                            Column(
-                              children: [
-                                Card(
-                                  color: notifier.getTheme().dividerColor,
-                                  child: InkWell(
-                                      onTap: () {
-                                        setCategorySearch("Audiovisuals");
-                                      },
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              border: Border.all(
-                                                  color: Colors.deepOrange,
-                                                  width: 5),
-                                            ),
-                                            child: Column(
-                                              children: [
-                                                Icon(Icons.camera_rounded,
-                                                    size: 65,
-                                                    color: notifier
-                                                        .getTheme()
-                                                        .hintColor),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      )),
-                                ),
-                                const Text(
-                                  "Audiovisuals",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 60,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Column(
-                              children: [
-                                Card(
-                                  color: notifier.getTheme().dividerColor,
-                                  child: InkWell(
-                                      onTap: () {
-                                        setCategorySearch("Security");
-                                      },
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              border: Border.all(
-                                                  color: Colors.deepOrange,
-                                                  width: 5),
-                                            ),
-                                            child: Column(
-                                              children: [
-                                                Icon(Icons.security_rounded,
-                                                    size: 65,
-                                                    color: notifier
-                                                        .getTheme()
-                                                        .hintColor),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      )),
-                                ),
-                                const Text(
-                                  "Security",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(
-                              width: 60,
-                            ),
-                            Column(
-                              children: [
-                                Card(
-                                  color: notifier.getTheme().dividerColor,
-                                  child: InkWell(
-                                      onTap: () {
-                                        setCategorySearch("Books");
-                                      },
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              border: Border.all(
-                                                  color: Colors.deepOrange,
-                                                  width: 5),
-                                            ),
-                                            child: Column(
-                                              children: [
-                                                Icon(Icons.book,
-                                                    size: 65,
-                                                    color: notifier
-                                                        .getTheme()
-                                                        .hintColor),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      )),
-                                ),
-                                const Text(
-                                  "Books",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 60,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Column(
-                              children: [
-                                Card(
-                                  color: notifier.getTheme().dividerColor,
-                                  child: InkWell(
-                                      onTap: () {
-                                        setCategorySearch("Hardware");
-                                      },
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(12),
-                                              border: Border.all(
-                                                  color: Colors.deepOrange,
-                                                  width: 5),
-                                            ),
-                                            child: Column(
-                                              children: [
-                                                Icon(Icons.computer_rounded,
-                                                    size: 65,
-                                                    color: notifier
-                                                        .getTheme()
-                                                        .hintColor),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      )),
-                                ),
-                                const Text(
-                                  "Hardware",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 20,
+                        SizedBox(width: 40,),
+
+                        Text(
+                          "What are you looking for?",
+                          style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
-                  ))
+                    
+                    const Divider(
+                      thickness: 3,
+                      color: Colors.grey,
+                      indent: 30,
+                      endIndent: 30,
+                    ),
+                        
+                    const SizedBox(height: 40,),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          children: [
+                            Card(
+                              color: notifier.getTheme().dividerColor,
+                              child: InkWell(
+                                onTap: () async {
+                                  setCategorySearch(0);
+                                },
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                          color: Colors.deepOrange,
+                                          width: 5
+                                        ),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Icon(
+                                            Icons.format_paint,
+                                            size: 65,
+                                            color: notifier.getTheme().hintColor
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ),
+                            ),
+                                
+                            const Text(
+                              "Art Materials",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                            
+                        const SizedBox(width: 60,),
+
+                        Column(
+                          children: [
+                            Card(
+                              color: notifier.getTheme().dividerColor,
+                              child: InkWell(
+                                onTap: () {
+                                  setCategorySearch(1);
+                                },
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius:BorderRadius.circular(12),
+                                        border: Border.all(
+                                          color: Colors.deepOrange,
+                                          width: 5),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Icon(
+                                            Icons.camera_rounded,
+                                            size: 65,
+                                            color: notifier.getTheme().hintColor
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ),
+                            ),
+
+                            const Text(
+                              "Audiovisuals",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                        
+                    const SizedBox(height: 60,),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          children: [
+                            Card(
+                              color: notifier.getTheme().dividerColor,
+                              child: InkWell(
+                                onTap: () {
+                                  setCategorySearch(2);
+                                },
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                          color: Colors.deepOrange,
+                                          width: 5
+                                        ),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Icon(
+                                            Icons.security_rounded,
+                                            size: 65,
+                                            color: notifier.getTheme().hintColor
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ),
+                            ),
+                                
+                            const Text(
+                              "Security",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                            
+                        const SizedBox(width: 60,),
+
+                        Column(
+                          children: [
+                            Card(
+                              color: notifier.getTheme().dividerColor,
+                              child: InkWell(
+                                onTap: () {
+                                  setCategorySearch(3);
+                                },
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                          color: Colors.deepOrange,
+                                          width: 5),
+                                        ),
+                                      child: Column(
+                                        children: [
+                                          Icon(
+                                            Icons.book,
+                                            size: 65,
+                                            color: notifier.getTheme().hintColor
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                                
+                            const Text(
+                               "Books",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                        
+                    const SizedBox(height: 60,),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          children: [
+                            Card(
+                              color: notifier.getTheme().dividerColor,
+                              child: InkWell(
+                                onTap: () {
+                                  setCategorySearch(4);
+                                },
+                                child: Column(
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12),
+                                        border: Border.all(
+                                          color: Colors.deepOrange,
+                                          width: 5
+                                        ),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          Icon(
+                                            Icons.computer_rounded,
+                                            size: 65,
+                                            color: notifier.getTheme().hintColor
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ),
+                            ),
+                                
+                            const Text(
+                              "Hardware",
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20,),
+                  ],
+                ),
+              ),
+          ),
         ],
       ),
     );

@@ -6,6 +6,7 @@ enum NetworkStatus {online, offline}
 class ConnectivityService {
 
   StreamController<NetworkStatus> controller = StreamController();
+  //controller.
 
   NetworkStatus _networkStatus(List<ConnectivityResult> connectivityResult){
     return connectivityResult.contains(ConnectivityResult.mobile) || connectivityResult.contains(ConnectivityResult.wifi) 

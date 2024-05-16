@@ -1,5 +1,5 @@
 import 'dart:isolate';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unimarket/Controllers/search_controllerUnimarket.dart';
@@ -8,7 +8,6 @@ import 'package:unimarket/Views/productDetail_view.dart';
 import 'package:unimarket/resources/connectivity_service.dart';
 import 'package:unimarket/resources/shimmer_effect.dart';
 import 'package:unimarket/theme.dart';
-import 'package:unimarket/firebase_options.dart';
 
 
 enum ColorLabel {
@@ -25,7 +24,8 @@ enum IconLabel {
   audiovisuals('Audiovisuals', Icons.camera_rounded),
   security('Security', Icons.security_rounded),
   books('Books', Icons.book),
-  hardware('Hardware', Icons.computer_rounded);
+  hardware('Hardware', Icons.computer_rounded),
+  noCategory('None', Icons.error);
 
   const IconLabel(this.label, this.icon);
   final String label;
@@ -33,24 +33,24 @@ enum IconLabel {
 }
 
 class SearchView extends StatefulWidget {
-  const SearchView({super.key});
+
+  final int categoryIndex;
+
+  SearchView({super.key,required this.categoryIndex});
 
   @override
   State<SearchView> createState() => _SearchViewState();
 }
 
 void isolateFunction(List arguments) async {
+  SendPort sendPort = arguments[0];
+  List<ProductModel> prodList = arguments[1];
+  List<ProductModel> trendingList = [];
 
-  await Firebase.initializeApp(
-    name: 'unimarket',
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  
-  List<ProductModel> prodList = await arguments[1].getAllProducts();
   prodList.sort((a,b)=> b.views.compareTo(a.views));
-  prodList.sublist(0,5);
+  trendingList = prodList.sublist(0,5);
 
-  arguments[0].send(prodList);
+  sendPort.send(trendingList);
 }
 
 class _SearchViewState extends State<SearchView> {
@@ -82,15 +82,11 @@ class _SearchViewState extends State<SearchView> {
     _searcController = SearchControllerUnimarket();
     displayList = <ProductModel>[];
     filteredList = <ProductModel>[];
-    filterTrendingProducts2();
-    //filterTrendingProducts();
-    //filterTrendingProducts().then((value) => setState(() {
-      //trendsReady = true;
-    //}));
-    
-    //getAllProducts().then((value){getTrendingProducts();});
-    
-    //getAllProducts();
+    filterTrendingProducts().then((value) => setState(() {
+      trendsReady = true;
+    }));
+    IconLabel.values[widget.categoryIndex] == IconLabel.noCategory ?
+      print("nada") : {selectedIcon = IconLabel.values[widget.categoryIndex]};
   }
 
   Future<List<ProductModel>> getAllProducts() async {
@@ -101,8 +97,10 @@ class _SearchViewState extends State<SearchView> {
 
   filterTrendingProducts() async {
 
-    ReceivePort receivePort = ReceivePort();
-    Isolate.spawn(isolateFunction, [receivePort.sendPort, _searcController]);
+    final receivePort = ReceivePort();
+    List<ProductModel> prodList = await _searcController.getAllProducts();
+    
+    Isolate.spawn(isolateFunction, [receivePort.sendPort, prodList]);
 
     trendingProductsList = await receivePort.first;
   }
@@ -112,6 +110,10 @@ class _SearchViewState extends State<SearchView> {
     List<ProductModel> prodList = await _searcController.getAllProducts();
     prodList.sort((a,b)=> b.views.compareTo(a.views));
     trendingProductsList = prodList.sublist(0,5);
+
+    await Future.wait(
+      trendingProductsList.map((product) => cacheImage(context, product.image)).toList()
+    );
     //await Future.delayed(const Duration(seconds: 3), (){});
     setState(() {
       trendsReady = true;
@@ -128,7 +130,6 @@ class _SearchViewState extends State<SearchView> {
     });
   }
 
-  //TODO: To increment the amount of views and re do the filtering
   Future<void> updateTrends(ProductModel product) async {
     setState(() {
       trendingProductsList.sort(((a, b) => b.views.compareTo(a.views)));
@@ -169,6 +170,10 @@ class _SearchViewState extends State<SearchView> {
     selectedColor!.label == 'Never used' ? used = false : used = true;
     List<ProductModel> listaProds = await _searcController.getFilteredProducts(selectedIcon!.label, used);
 
+    await Future.wait(
+      listaProds.map((product) => cacheImage(context, product.image)).toList()
+    );
+
     //await Future.delayed(const Duration(seconds: 5), (){});
 
     setState(() {
@@ -180,8 +185,35 @@ class _SearchViewState extends State<SearchView> {
     updateList('', notifier);
   }
 
+  Future cacheImage(BuildContext context, String urlImage)=> precacheImage(
+    CachedNetworkImageProvider(urlImage), 
+    context
+  );
+
   incrementTrend(ProductModel prod){
     _searcController.incrementViews(prod);
+  }
+
+  void showNoConnectionDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Provider.of<ThemeNotifier>(context).getTheme().cardColor, // Set background color to green
+          title: const Text('No internet connection'),
+          content: const Text(
+              'Seems to be that your device has no connection in this moment. Please check your connection and try again'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Accept'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
 
@@ -216,9 +248,11 @@ class _SearchViewState extends State<SearchView> {
               ],
             )
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(10),
-            child: Column(
+          body: ListView(
+            scrollDirection: Axis.vertical,
+            shrinkWrap: true,
+            children: [
+              Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -294,7 +328,7 @@ class _SearchViewState extends State<SearchView> {
                                   const SizedBox(height: 7.0),
                                   CircleAvatar(
                                     radius: 40,
-                                    backgroundImage: NetworkImage(trendingProductsList[index].image),
+                                    backgroundImage: CachedNetworkImageProvider(trendingProductsList[index].image),
                                   ),
                                   const SizedBox(height: 7,),
                                   Text("Price: ${trendingProductsList[index].price}",
@@ -379,6 +413,7 @@ class _SearchViewState extends State<SearchView> {
                     DropdownMenu<IconLabel>(
                       controller: _searcController.iconController,
                       requestFocusOnTap: true,
+                      initialSelection: selectedIcon,
                       label: const Text('Category'),
                       width: 150.0,
                       onSelected: (IconLabel? icon) {
@@ -398,7 +433,15 @@ class _SearchViewState extends State<SearchView> {
                           }).toList(),
                     ),
 
-                    IconButton(onPressed: () async {await requestFilteredProducts(notifier);}, icon: const Icon(Icons.check_circle_outlined))
+                    IconButton(onPressed: () async {
+                      networkStatus == NetworkStatus.online ? 
+                        (selectedColor!=null && selectedIcon!=null) ?
+                          await requestFilteredProducts(notifier)
+                          : showFilterDialog(context)
+                        : showNoConnectionDialog(context);
+                      }, 
+                      icon: const Icon(Icons.check_circle_outlined)
+                    )
                   ],
                 ),
 
@@ -406,8 +449,7 @@ class _SearchViewState extends State<SearchView> {
 
                 const SizedBox(height: 10,),
 
-                Expanded(
-                  child: (networkStatus == NetworkStatus.online) ?
+                (networkStatus == NetworkStatus.online) ?
                     (!isSearchDone ? 
                       const Align(
                         alignment: Alignment.center,
@@ -444,7 +486,14 @@ class _SearchViewState extends State<SearchView> {
                                   ],
                                 ),
                               )
-                              : GridView.builder(
+                              : Padding(
+                                padding: const EdgeInsets.all(8),
+                                child: Column(
+                                
+                                  children: [
+                                    GridView.builder(
+                                  shrinkWrap: true,
+                                  physics: const NeverScrollableScrollPhysics(),
                                   itemCount: isLoadingFiltered ? 4 : displayList.length,
                                   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                                     maxCrossAxisExtent: 300,
@@ -497,7 +546,7 @@ class _SearchViewState extends State<SearchView> {
 
                                           CircleAvatar(
                                             radius: 60,
-                                            backgroundImage: NetworkImage(displayList[index].image),
+                                            backgroundImage: CachedNetworkImageProvider(displayList[index].image),
                                           ),
                                           const SizedBox(height: 10,),
                                           Text("Price: ${displayList[index].price}",
@@ -511,7 +560,13 @@ class _SearchViewState extends State<SearchView> {
                                       ),
                                     ),
                                   ),
-                                )
+                                ),
+                                
+                                  const SizedBox(height: 20,)
+                                  ],
+                                ),
+                              )
+                              
                             )
                     ) 
                     : (filteredList.isEmpty ? 
@@ -550,7 +605,10 @@ class _SearchViewState extends State<SearchView> {
                                   ],
                                 ),
                               )
-                              : GridView.builder(
+                              : Column(
+                                children: [
+                                  GridView.builder(
+                                  shrinkWrap: true,
                                   itemCount: isLoadingFiltered ? 4 : displayList.length,
                                   gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                                     maxCrossAxisExtent: 300,
@@ -603,7 +661,7 @@ class _SearchViewState extends State<SearchView> {
 
                                           CircleAvatar(
                                             radius: 60,
-                                            backgroundImage: NetworkImage(displayList[index].image),
+                                            backgroundImage: CachedNetworkImageProvider(displayList[index].image),
                                           ),
                                           const SizedBox(height: 10,),
                                           Text("Price: ${displayList[index].price}",
@@ -617,13 +675,17 @@ class _SearchViewState extends State<SearchView> {
                                       ),
                                     ),
                                   ),
-                                )
+                                ),
+                                const SizedBox(height: 20,),
+                                ],
+                              )
+                              
                             )
                       )
-                ),
               ],
             ),
-          ),
+            ],
+          )
         )
     );
   }

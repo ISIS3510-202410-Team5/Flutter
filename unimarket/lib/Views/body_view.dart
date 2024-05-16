@@ -6,7 +6,7 @@ import 'package:unimarket/Views/cart_view.dart';
 import 'package:unimarket/Views/chat_view.dart';
 import 'package:unimarket/Views/home_view.dart';
 import 'package:unimarket/Views/publish_view/publish_view.dart';
-import 'package:unimarket/Views/search_view.dart';
+import 'package:unimarket/Views/search_view/search_view.dart';
 import 'package:unimarket/nav_bar.dart';
 import 'package:noise_meter/noise_meter.dart';
 
@@ -38,7 +38,7 @@ class _BodyViewState extends State<BodyView> {
       builder: (BuildContext context) {
         return AlertDialog(
           backgroundColor:
-              Color.fromARGB(255, 212, 129, 12), // Set background color to red
+              const Color.fromARGB(255, 212, 129, 12), // Set background color to red
           title: const Text('Noise Alert'),
           content: const Text(
               "Noise reached 90 decibels of noise or higher , considero moving to a calmer place"),
@@ -109,14 +109,13 @@ class _BodyViewState extends State<BodyView> {
 
   var pageViewList = [
     Container(
-      color: Colors.white,
       alignment: Alignment.center,
       child: const HomeView(),
     ),
     Container(
       color: Colors.white,
       alignment: Alignment.center,
-      child: const SearchView(),
+      child: SearchView(categoryIndex: 5,),
     ),
     Container(
       color: Colors.white,
@@ -131,7 +130,7 @@ class _BodyViewState extends State<BodyView> {
     Container(
       color: Colors.white,
       alignment: Alignment.center,
-      child: Text('Here goes the settings page'),
+      child: const Text('Here goes the settings page'),
     ),
     Container(
       color: Colors.white,
@@ -141,7 +140,7 @@ class _BodyViewState extends State<BodyView> {
     Container(
       color: Colors.white,
       alignment: Alignment.center,
-      child: Text('Here goes the user profile page'),
+      child: const Text('Here goes the user profile page'),
     )
   ];
 

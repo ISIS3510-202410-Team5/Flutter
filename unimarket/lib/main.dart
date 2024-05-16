@@ -1,10 +1,9 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:unimarket/Views/body_view.dart';
 import 'package:unimarket/Views/home_view.dart';
 import 'package:unimarket/Views/publish_view/publish_view.dart';
-import 'package:unimarket/Views/search_view.dart';
+import 'package:unimarket/Views/search_view/search_view.dart';
 import 'package:unimarket/firebase_options.dart';
 import 'package:unimarket/Views/login_view.dart';
 import 'package:unimarket/resources/connectivity_service.dart';
@@ -40,10 +39,11 @@ class MyApp extends StatelessWidget {
             title: 'UniMarket',
             theme: notifier.darkTheme ? dark : light,
             debugShowCheckedModeBanner: false,
-            home: const LoginView(),
+            
+            //home: const LoginView(),
             //home: const HomeView(),
-            //home: const PublishView(),
-            //home: const SearchView(),
+            home: const PublishView(),
+            //home: SearchView(categoryIndex: 5,),
           );
         },
       ),

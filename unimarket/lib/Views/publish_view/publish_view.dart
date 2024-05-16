@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -65,26 +67,38 @@ class _PublishViewState extends State<PublishView> {
   //For the elevated button
   bool _isDisabled = false;
 
+  //For the connection state;
+  late bool _isConnected;
+ // late NetworkStatus networkStatus;
+
   @override
   void initState() {
     _publishController = PublishController();
+    //var networkStatus = Provider.of<NetworkStatus>(context);
+    //(networkStatus == NetworkStatus.offline) ? _isConnected = false : _isConnected = true;
     super.initState();
   }
 
-  createProduct(String name, String category, int price, bool use, String description) async {
+
+
+  createProductWithConnection(String name, String category, int price, bool use, String description) async {
 
     ProductModel producto = ProductModel(null, name, category, price, use, 'null', false, 0, description, 'null');
     await _publishController.addProductToCatalog(producto, selectedImage!);
-    //await Future.delayed(const Duration(seconds: 10), (){});
     
     setState(() {
       isUploaded = true;
     });
   }
 
-  void showLoadingDialog(BuildContext context) {
+  
+
+  
+
+  showLoadingDialog(BuildContext context) {
     showDialog(
       context: context,
+      barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
           
@@ -95,7 +109,7 @@ class _PublishViewState extends State<PublishView> {
     );
   }
 
-  void showUploadedDialog(BuildContext context) {
+  showUploadedDialog(BuildContext context) {
 
     Navigator.of(context).pop();
     
@@ -105,8 +119,7 @@ class _PublishViewState extends State<PublishView> {
         return AlertDialog(
           backgroundColor: Provider.of<ThemeNotifier>(context).getTheme().cardColor, // Set background color to green
           title: const Text('¡¡Success!!'),
-          content: const Text(
-              'Your product was successfully added to the database. Go and search it in the search view!!'),
+          content: const Text('Your product was successfully added to the database. Go and search it in the search view!!'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -123,7 +136,7 @@ class _PublishViewState extends State<PublishView> {
     );
   }
 
-  void showErrorFieldDialog(BuildContext context, String message) {
+  showErrorFieldDialog(BuildContext context, String message) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -144,10 +157,109 @@ class _PublishViewState extends State<PublishView> {
     );
   }
 
+  showNoConnectionDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Provider.of<ThemeNotifier>(context).getTheme().cardColor, // Set background color to green
+          title: const Text('No internet connection'),
+          content: const Text(
+            'Seems to be that your device has no connection in this moment. Please check your connection and try again'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  showNoConnectionPublishDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Provider.of<ThemeNotifier>(context).getTheme().cardColor, // Set background color to green
+          title: const Text('No internet connection'),
+          content: const Text(
+            'Remember that there is no internet connection. The information will be stored and we will let you know when your product is published.'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  showPublishedAfterConnectionDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: Provider.of<ThemeNotifier>(context).getTheme().cardColor,
+          title: const Text('Product Notification'),
+          content: const Text(
+            'The product you created while being offline is now published. Go and check it in the search view!!'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Ok'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  change1(BuildContext context){
+    setState(() {
+      _isConnected = false;
+    });
+    print("Ahora no está conectado");
+  }
+
+  change2(BuildContext context){
+    setState(() {
+      _isConnected = true;
+    });
+
+    print("Ahora si está conectado");
+  }
+
+  Future createProductWithoutConnection(String name, String category, int price, bool use, String description) async {
+
+      ProductModel producto = ProductModel(null, name, category, price, use, 'null', false, 0, description, 'null');
+
+      StreamSubscription subscription = Connectivity().onConnectivityChanged.listen((event) async {
+        await _publishController.addProductToCatalog(producto, selectedImage!);
+        showPublishedAfterConnectionDialog(context);
+        setState(() {
+          isUploaded = true;
+        });
+      });
+
+      //await Future.delayed(const Duration(seconds: 10), (){});
+    }
+
   @override
   Widget build(BuildContext context) {
     //For the connection check
     var networkStatus = Provider.of<NetworkStatus>(context);
+    //(networkStatus == NetworkStatus.offline) ? change1(context) : change2(context);
+
+    
 
     return Scaffold(
         appBar: AppBar(
@@ -173,7 +285,8 @@ class _PublishViewState extends State<PublishView> {
           scrollDirection: Axis.vertical,
           children: [
             Card(
-                color: Provider.of<ThemeNotifier>(context).getTheme().cardColor,
+                
+                
                 margin:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                 child: Padding(
@@ -218,8 +331,7 @@ class _PublishViewState extends State<PublishView> {
                                         )
                                       : CircleAvatar(
                                           radius: 100,
-                                          backgroundImage: const NetworkImage(
-                                              "https://cdn4.iconfinder.com/data/icons/documents-36/25/add-picture-512.png"),
+                                          backgroundImage: const AssetImage('assets/images/add_new_photo.png'),
                                           backgroundColor: Colors.deepOrange[50],
                                         )
                                 ],
@@ -323,7 +435,7 @@ class _PublishViewState extends State<PublishView> {
                                 validator: (value) => settingsProvider.descriptionValidator(value),
                               ),
 
-                              const SizedBox(height: 20,),
+                              const SizedBox(height: 10,),
 
                               Row(
                                 children: [
@@ -424,54 +536,61 @@ class _PublishViewState extends State<PublishView> {
                                     _isDisabled = true;
                                   });
 
-                                  if(networkStatus == NetworkStatus.online){
-
-                                  } else{
-                                    
-                                  }
-
-                                    if(_image!=null){
-                                      if(formKey.currentState!.validate()){
-                                        if(selectedColor!=null){
-                                          if(selectedIcon!=null){
+                                  if(_image!=null){
+                                    if(formKey.currentState!.validate()){
+                                      if(selectedColor!=null){
+                                        if(selectedIcon!=null){
+                                          if(networkStatus == NetworkStatus.online){
 
                                             showLoadingDialog(context);
 
-                                            await createProduct(
+                                            await createProductWithConnection(
                                               _publishController.controllerName.text, 
                                               selectedIcon!.label, 
                                               int.parse(_publishController.controllerPrice.text), 
                                               selectedColor!.label == 'Never used' ? false : true, 
                                               _publishController.controllerDescription.text
                                             );
-                                            _publishController.controllerName.clear();
-                                            _publishController.useController.clear();
-                                            _publishController.iconController.clear();
-                                            _publishController.controllerPrice.clear();
-                                            _publishController.controllerDescription.clear();
-
-                                            setState(() {
-                                              colorIcon = Colors.deepOrange;
-                                              iconCategory = Icons.question_mark;
-                                              _image = null;
-                                              _isDisabled = false;
-                                            });
-
                                             showUploadedDialog(context);
+                                          } else{
+                                              showNoConnectionPublishDialog(context);
 
-                                          } else {
+                                              createProductWithoutConnection(
+                                                _publishController.controllerName.text, 
+                                                selectedIcon!.label, 
+                                                int.parse(_publishController.controllerPrice.text), 
+                                                selectedColor!.label == 'Never used' ? false : true, 
+                                                _publishController.controllerDescription.text
+                                              );
+                                            }
+
+                                          _publishController.controllerName.clear();
+                                          _publishController.useController.clear();
+                                          _publishController.iconController.clear();
+                                          _publishController.controllerPrice.clear();
+                                          _publishController.controllerDescription.clear();
+
+                                          setState(() {
+                                            colorIcon = Colors.deepOrange;
+                                            iconCategory = Icons.question_mark;
+                                            _image = null;
+                                          });
+                                        } else {
                                             showErrorFieldDialog(context, "Please select a category for the product");
                                           }
-                                        } else {
+                                      } else {
                                           showErrorFieldDialog(context, "Please select a use for the product");
                                         }
-                                      } else {
+                                    } else {
                                         showErrorFieldDialog(context, "Please check if you are satisfying the requirements of each field");
                                       }
-                                    } else {
+                                  } else {
                                       showErrorFieldDialog(context, "Please select an image for the product");
                                     }
-                                  },
+                                    setState(() {
+                                    _isDisabled = false;
+                                  });
+                                },
                                 child: const Text(
                                   'Publish product',
                                   style: TextStyle(
@@ -498,7 +617,8 @@ class _PublishViewState extends State<PublishView> {
                   )
                 )),
           ],
-        ));
+        )
+      );
   }
 
   void showImagePickerOption(BuildContext context) {
