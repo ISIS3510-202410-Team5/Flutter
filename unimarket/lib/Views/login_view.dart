@@ -1,4 +1,9 @@
+import 'dart:isolate';
+import 'dart:ui';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:unimarket/Controllers/network_controller.dart';
 import 'package:unimarket/Controllers/search_controllerUnimarket.dart';
 import 'package:unimarket/Views/register_view.dart';
 import 'package:unimarket/Controllers/auth_controller.dart';
@@ -13,18 +18,41 @@ class LoginView extends StatefulWidget {
 
 class _LoginViewState extends State<LoginView> {
   late AuthController _authController;
-
+  final Connectivity connectivity = Connectivity();
+  NetworkController networkChecker = NetworkController();
   String email = "";
   String contrasena = "";
 
-
   @override
   void initState() {
+    WidgetsFlutterBinding.ensureInitialized();
+    netCheck();
     _authController = AuthController();
     super.initState();
   }
 
-  verificadorConexion
+  void netCheck() async {
+    var receivePort = ReceivePort();
+    // var rootToken = RootIsolateToken.instance!;
+
+    // BackgroundIsolateBinaryMessenger.ensureInitialized(rootToken);
+    await Isolate.spawn(checkNetwork, receivePort.sendPort);
+
+    receivePort.listen((total) {
+      showNetworkErrorDialog(context);
+    });
+  }
+
+  void checkNetwork(SendPort sendPort) async {
+    var a = true;
+    while (a) {
+      List<ConnectivityResult> connectivityResult =
+          await (connectivity.checkConnectivity());
+      if (connectivityResult.contains(ConnectivityResult.none)) {
+        sendPort.send(1);
+      }
+    }
+  }
 
   Widget _buildTextField(String labelText, String hintText,
       {bool obscureText = false}) {
@@ -97,6 +125,30 @@ class _LoginViewState extends State<LoginView> {
           ),
         ),
       ],
+    );
+  }
+
+  void showNetworkErrorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor:
+              Color.fromARGB(255, 212, 129, 12), // Set background color to red
+          title: const Text('Network Error'),
+          content: const Text("Connect to internet please"),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                // Close the dialog
+                netCheck();
+                Navigator.of(context).pop();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
     );
   }
 
