@@ -17,11 +17,14 @@ class _LoginViewState extends State<LoginView> {
   String email = "";
   String contrasena = "";
 
+
   @override
   void initState() {
     _authController = AuthController();
     super.initState();
   }
+
+  verificadorConexion
 
   Widget _buildTextField(String labelText, String hintText,
       {bool obscureText = false}) {
