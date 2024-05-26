@@ -8,6 +8,7 @@ import 'package:unimarket/Controllers/search_controllerUnimarket.dart';
 import 'package:unimarket/Views/register_view.dart';
 import 'package:unimarket/Controllers/auth_controller.dart';
 import 'package:unimarket/Views/body_view.dart';
+import 'package:flutter/foundation.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -16,16 +17,29 @@ class LoginView extends StatefulWidget {
   State<LoginView> createState() => _LoginViewState();
 }
 
+// void isolateFunction(List arguments) async {
+//   await Firebase.initializeApp(
+//     name: 'unimarket',
+//     options: DefaultFirebaseOptions.currentPlatform,
+//   );
+//   List<ProductModel> prodList = await arguments[1].getAllProducts();
+//   prodList.sort((a,b)=> b.views.compareTo(a.views));
+//   prodList.sublist(0,5);
+//   arguments[0].send(prodList);
+// }
+
 class _LoginViewState extends State<LoginView> {
   late AuthController _authController;
   final Connectivity connectivity = Connectivity();
-  NetworkController networkChecker = NetworkController();
+
+  NetworkController netw = NetworkController();
   String email = "";
   String contrasena = "";
 
   @override
   void initState() {
     WidgetsFlutterBinding.ensureInitialized();
+    NetworkController netw = new NetworkController();
     netCheck();
     _authController = AuthController();
     super.initState();
@@ -33,25 +47,17 @@ class _LoginViewState extends State<LoginView> {
 
   void netCheck() async {
     var receivePort = ReceivePort();
-    // var rootToken = RootIsolateToken.instance!;
-
+    var rootToken = RootIsolateToken.instance!;
+    print("object");
     // BackgroundIsolateBinaryMessenger.ensureInitialized(rootToken);
-    await Isolate.spawn(checkNetwork, receivePort.sendPort);
+    // BackgroundIsolateBinaryMessenger.ensureInitialized(rootToken);
+    await Isolate.spawn(
+        netw.checkNetwork, [receivePort.sendPort, rootToken, connectivity]);
 
     receivePort.listen((total) {
+      print("total");
       showNetworkErrorDialog(context);
     });
-  }
-
-  void checkNetwork(SendPort sendPort) async {
-    var a = true;
-    while (a) {
-      List<ConnectivityResult> connectivityResult =
-          await (connectivity.checkConnectivity());
-      if (connectivityResult.contains(ConnectivityResult.none)) {
-        sendPort.send(1);
-      }
-    }
   }
 
   Widget _buildTextField(String labelText, String hintText,
@@ -141,8 +147,8 @@ class _LoginViewState extends State<LoginView> {
             TextButton(
               onPressed: () {
                 // Close the dialog
-                netCheck();
                 Navigator.of(context).pop();
+                netCheck();
               },
               child: const Text('OK'),
             ),
