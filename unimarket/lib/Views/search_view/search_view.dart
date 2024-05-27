@@ -852,7 +852,7 @@ class _SearchViewState extends State<SearchView> {
                                                                 .center,
                                                           ),
                                                           const SizedBox(
-                                                              height: 4.0),
+                                                              height: 4.1),
                                                           const Divider(
                                                             height: 1,
                                                             thickness: 2,
