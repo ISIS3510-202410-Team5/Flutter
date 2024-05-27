@@ -40,9 +40,9 @@ class MyApp extends StatelessWidget {
             theme: notifier.darkTheme ? dark : light,
             debugShowCheckedModeBanner: false,
             
-            //home: const LoginView(),
+            home: const LoginView(),
             //home: const HomeView(),
-            home: const PublishView(),
+            //home: const PublishView(),
             //home: SearchView(categoryIndex: 5,),
           );
         },
