@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_isolate/flutter_isolate.dart';
 import 'package:unimarket/Controllers/network_controller.dart';
 import 'package:unimarket/Controllers/search_controllerUnimarket.dart';
 import 'package:unimarket/Views/register_view.dart';
@@ -209,6 +210,7 @@ class _LoginViewState extends State<LoginView> {
 
       if (existingUser) {
         // netIsol.kill;
+        FlutterIsolate.killAll();
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => BodyView()));
       } else {
