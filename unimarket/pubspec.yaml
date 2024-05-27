@@ -51,6 +51,7 @@ dependencies:
   loading_animation_widget: ^1.2.1
   cached_network_image: ^3.3.1
   picasso: ^1.0.0-beta.4
+  flutter_isolate: ^2.0.4
 
 dev_dependencies:
   flutter_test:

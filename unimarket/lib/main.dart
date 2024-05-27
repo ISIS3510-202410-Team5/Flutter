@@ -26,12 +26,9 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         StreamProvider(
-          create: (context)=> ConnectivityService().controller.stream, 
-          initialData: NetworkStatus.online
-        ),
-        ChangeNotifierProvider(
-          create: (_) => ThemeNotifier()
-        ),
+            create: (context) => ConnectivityService().controller.stream,
+            initialData: NetworkStatus.online),
+        ChangeNotifierProvider(create: (_) => ThemeNotifier()),
       ],
       child: Consumer<ThemeNotifier>(
         builder: (context, ThemeNotifier notifier, child) {
@@ -39,10 +36,11 @@ class MyApp extends StatelessWidget {
             title: 'UniMarket',
             theme: notifier.darkTheme ? dark : light,
             debugShowCheckedModeBanner: false,
+
             
-            //home: const LoginView(),
             //home: const HomeView(),
-            home: const PublishView(),
+            //home: const PublishView(),
+            home: const LoginView(),
             //home: SearchView(categoryIndex: 5,),
           );
         },

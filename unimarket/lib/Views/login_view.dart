@@ -1,8 +1,15 @@
+import 'dart:isolate';
+import 'dart:ui';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_isolate/flutter_isolate.dart';
+import 'package:unimarket/Controllers/network_controller.dart';
 import 'package:unimarket/Controllers/search_controllerUnimarket.dart';
 import 'package:unimarket/Views/register_view.dart';
 import 'package:unimarket/Controllers/auth_controller.dart';
 import 'package:unimarket/Views/body_view.dart';
+import 'package:flutter/foundation.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -11,20 +18,70 @@ class LoginView extends StatefulWidget {
   State<LoginView> createState() => _LoginViewState();
 }
 
+// void isolateFunction(List arguments) async {
+//   await Firebase.initializeApp(
+//     name: 'unimarket',
+//     options: DefaultFirebaseOptions.currentPlatform,
+//   );
+//   List<ProductModel> prodList = await arguments[1].getAllProducts();
+//   prodList.sort((a,b)=> b.views.compareTo(a.views));
+//   prodList.sublist(0,5);
+//   arguments[0].send(prodList);
+// }
+
 class _LoginViewState extends State<LoginView> {
   late AuthController _authController;
+  final Connectivity connectivity = Connectivity();
 
+  NetworkController netw = NetworkController();
   String email = "";
   String contrasena = "";
+  FocusNode focusNode = FocusNode();
+  FocusNode focusNode2 = FocusNode();
+  String hintTextEmailUsername = 'Email/Username';
+  String hintTextPass = "******";
 
   @override
   void initState() {
+    WidgetsFlutterBinding.ensureInitialized();
+    NetworkController netw = new NetworkController();
+    netCheck();
     _authController = AuthController();
     super.initState();
+    focusNode.addListener(() {
+      if (focusNode.hasFocus) {
+        hintTextEmailUsername = '';
+      } else {
+        hintTextEmailUsername = 'Email/Username';
+      }
+      setState(() {});
+    });
+    focusNode2.addListener(() {
+      if (focusNode2.hasFocus) {
+        hintTextPass = '';
+      } else {
+        hintTextPass = "******";
+      }
+      setState(() {});
+    });
   }
 
-  Widget _buildTextField(String labelText, String hintText,
-      {bool obscureText = false}) {
+  void netCheck() async {
+    var receivePort = ReceivePort();
+    var rootToken = RootIsolateToken.instance!;
+    print("object");
+    // BackgroundIsolateBinaryMessenger.ensureInitialized(rootToken);
+    // BackgroundIsolateBinaryMessenger.ensureInitialized(rootToken);
+    final netIsol = await Isolate.spawn(
+        netw.checkNetwork, [receivePort.sendPort, rootToken, connectivity]);
+
+    receivePort.listen((total) {
+      print("total");
+      showNetworkErrorDialog(context);
+    });
+  }
+
+  Widget _buildTextField(String labelText, {bool obscureText = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -46,11 +103,12 @@ class _LoginViewState extends State<LoginView> {
           onChanged: (val) {
             setState(() => email = val);
           },
+          focusNode: focusNode,
           obscureText: obscureText,
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white,
-            hintText: hintText,
+            hintText: hintTextEmailUsername,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
@@ -60,8 +118,7 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
-  Widget _buildTextField1(String labelText, String hintText,
-      {bool obscureText = false}) {
+  Widget _buildTextField1(String labelText, {bool obscureText = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -83,11 +140,12 @@ class _LoginViewState extends State<LoginView> {
           onChanged: (val) {
             setState(() => contrasena = val);
           },
+          focusNode: focusNode2,
           obscureText: obscureText,
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white,
-            hintText: hintText,
+            hintText: hintTextPass,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
@@ -97,12 +155,37 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
+  void showNetworkErrorDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor:
+              Color.fromARGB(255, 212, 129, 12), // Set background color to red
+          title: const Text('Network Error'),
+          content: const Text("Connect to internet please"),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                // Close the dialog
+                Navigator.of(context).pop();
+                netCheck();
+              },
+              child: const Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   void showErrorDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Colors.red, // Set background color to red
+          backgroundColor:
+              Color.fromARGB(255, 212, 129, 12), // Set background color to red
           title: const Text('Oops!'),
           content: const Text(
               'Something went wrong singing in. Make sure the credentials you are providing are correct and that you already have an account registered'),
@@ -126,6 +209,8 @@ class _LoginViewState extends State<LoginView> {
       // Aquí va el proceso de verificación con Firebase
 
       if (existingUser) {
+        // netIsol.kill;
+        FlutterIsolate.killAll();
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => BodyView()));
       } else {
@@ -176,10 +261,9 @@ class _LoginViewState extends State<LoginView> {
                             ),
                           ),
                         ),
-                        _buildTextField('Email/Username', 'user@example.com'),
+                        _buildTextField('Email/Username'),
                         const SizedBox(height: 20.0),
-                        _buildTextField1('Password', '******',
-                            obscureText: true),
+                        _buildTextField1('Password', obscureText: true),
                         const SizedBox(height: 20.0),
                         ElevatedButton(
                           onPressed: () async {
@@ -209,6 +293,7 @@ class _LoginViewState extends State<LoginView> {
                         ElevatedButton(
                           onPressed: () {
                             // Add your registration logic here
+                            FlutterIsolate.killAll();
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
