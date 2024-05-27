@@ -37,7 +37,6 @@ class AuthController {
       // print("Tipo UserCredential  " + resultado.toString());
       // print("Tipo User  " + usuario.toString());
     } catch (e) {
-      return e;
       // rethrow;
     }
   }
