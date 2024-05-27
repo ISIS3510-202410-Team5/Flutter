@@ -1,5 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 class ProductModel {
   String? id;
   String name;
@@ -9,6 +7,8 @@ class ProductModel {
   String image;
   bool sold;
   int views = 0;
+  String description;
+  String? sellerId;
 
   ProductModel(
     this.id,
@@ -19,7 +19,13 @@ class ProductModel {
     this.image,
     this.sold,
     this.views,
+    this.description,
+    this.sellerId,
   );
+
+  setproductId(String id){
+    this.id = id;
+  }
   // toJson() {
   //   return {
   //     "id": id,

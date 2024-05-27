@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:unimarket/Models/Repository/cartRepository.dart';
 import 'package:unimarket/Models/Repository/productReposirory.dart';
 import 'package:unimarket/Models/product_model.dart';
@@ -13,7 +12,7 @@ class Model {
   factory Model() => single;
   Model._();
 
-  List<ProductModel> getProducts() {
+  getProducts() {
     return productos;
   }
 
@@ -39,6 +38,19 @@ class Model {
     productos.add(p);
   }
 
+  
+
+
+  getAllProducts() async {
+    List<ProductModel> lista = <ProductModel>[];
+    await ProductRepository().getAllProducts(lista);
+    return lista;
+  }
+
+  addAProduct(ProductModel product, List<ProductModel> lista) {
+    lista.add(product);
+  }
+
   getFilteredProducts(String category, bool use) async {
     List<ProductModel> lista = <ProductModel>[];
     await ProductRepository().getFilteredProducts(category, use, lista);
@@ -49,6 +61,13 @@ class Model {
     lista.add(product);
     //filteredProducts.add(product);
   }
+
+  incrementViews(ProductModel prod){
+    ProductRepository().incrementView(prod);
+  }
+
+
+
 
   void addProductToCart(String? pId) {
     CartRepository().addToCart(pId);
@@ -74,7 +93,7 @@ class Model {
     ProductModel producto = getProductById(idProducto, "Products");
     if (!productosCarrito.contains(producto)) {
       productosCarrito.add(producto);
-      cartPrice += producto.price;
+      cartPrice = cartPrice + producto.price;
     }
   }
 

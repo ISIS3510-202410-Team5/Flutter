@@ -8,11 +8,11 @@ import 'package:unimarket/Models/seller_model.dart';
 import 'package:uuid/uuid.dart';
 
 class ProductRepository {
-  final _DB = FirebaseFirestore.instance;
+  //final _DB = FirebaseFirestore.instance;
   int numProds = 0;
 
   void getData() async {
-    await _DB.collection("products").get().then((value) {
+    await FirebaseFirestore.instance.collection("products").get().then((value) {
       for (var i in value.docs) {
         ProductModel producto = ProductModel(
             i.id,
@@ -22,7 +22,9 @@ class ProductRepository {
             i.data()["used"],
             i.data()["image"],
             i.data()["sold"],
-            i.data()["views"]);
+            i.data()["views"],
+            i.data()["description"],
+            i.data()["sellerId"]);
         Model().addProduct(producto);
       }
     });
@@ -42,9 +44,46 @@ class ProductRepository {
                 i.data()["used"],
                 i.data()["image"],
                 i.data()["sold"],
-                i.data()["views"]);
+                i.data()["views"],
+                i.data()["description"],
+                i.data()["sellerId"]
+              );
             Model().addFilteredProduct(producto, lista);
           }
     });
+  }
+
+  Future getAllProducts(List<ProductModel> lista) async {
+    await FirebaseFirestore.instance.collection("products")
+      .get().then((value){
+          for (var i in value.docs) {
+            ProductModel producto = ProductModel(
+                i.id,
+                i.data()["name"],
+                i.data()["category"],
+                i.data()["price"],
+                i.data()["used"],
+                i.data()["image"],
+                i.data()["sold"],
+                i.data()["views"],
+                i.data()["description"],
+                i.data()["sellerId"]
+              );
+            Model().addAProduct(producto, lista);
+          }
+    });
+  }
+
+  Future incrementView(ProductModel prod) async {
+
+    int actualViews = 0;
+
+    await FirebaseFirestore.instance.collection("products").doc(prod.id).get().then((value) => {
+      actualViews = value.data()!['views']
+    });
+
+    actualViews++;
+
+    await FirebaseFirestore.instance.collection("products").doc(prod.id).update({'views':actualViews});
   }
 }
