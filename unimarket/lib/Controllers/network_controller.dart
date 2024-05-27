@@ -17,7 +17,6 @@ class NetworkController {
     RootIsolateToken rootToken = arguments[1];
     BackgroundIsolateBinaryMessenger.ensureInitialized(rootToken);
     var a = true;
-
     while (a) {
       List<ConnectivityResult> connectivityResult =
           await (arguments[2].checkConnectivity());
