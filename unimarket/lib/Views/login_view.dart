@@ -35,6 +35,10 @@ class _LoginViewState extends State<LoginView> {
   NetworkController netw = NetworkController();
   String email = "";
   String contrasena = "";
+  FocusNode focusNode = FocusNode();
+  FocusNode focusNode2 = FocusNode();
+  String hintTextEmailUsername = 'Email/Username';
+  String hintTextPass = "******";
 
   @override
   void initState() {
@@ -43,6 +47,22 @@ class _LoginViewState extends State<LoginView> {
     netCheck();
     _authController = AuthController();
     super.initState();
+    focusNode.addListener(() {
+      if (focusNode.hasFocus) {
+        hintTextEmailUsername = '';
+      } else {
+        hintTextEmailUsername = 'Email/Username';
+      }
+      setState(() {});
+    });
+    focusNode2.addListener(() {
+      if (focusNode2.hasFocus) {
+        hintTextPass = '';
+      } else {
+        hintTextPass = "******";
+      }
+      setState(() {});
+    });
   }
 
   void netCheck() async {
@@ -51,7 +71,7 @@ class _LoginViewState extends State<LoginView> {
     print("object");
     // BackgroundIsolateBinaryMessenger.ensureInitialized(rootToken);
     // BackgroundIsolateBinaryMessenger.ensureInitialized(rootToken);
-    await Isolate.spawn(
+    final netIsol = await Isolate.spawn(
         netw.checkNetwork, [receivePort.sendPort, rootToken, connectivity]);
 
     receivePort.listen((total) {
@@ -60,8 +80,7 @@ class _LoginViewState extends State<LoginView> {
     });
   }
 
-  Widget _buildTextField(String labelText, String hintText,
-      {bool obscureText = false}) {
+  Widget _buildTextField(String labelText, {bool obscureText = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -83,11 +102,12 @@ class _LoginViewState extends State<LoginView> {
           onChanged: (val) {
             setState(() => email = val);
           },
+          focusNode: focusNode,
           obscureText: obscureText,
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white,
-            hintText: hintText,
+            hintText: hintTextEmailUsername,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
@@ -97,8 +117,7 @@ class _LoginViewState extends State<LoginView> {
     );
   }
 
-  Widget _buildTextField1(String labelText, String hintText,
-      {bool obscureText = false}) {
+  Widget _buildTextField1(String labelText, {bool obscureText = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -120,11 +139,12 @@ class _LoginViewState extends State<LoginView> {
           onChanged: (val) {
             setState(() => contrasena = val);
           },
+          focusNode: focusNode2,
           obscureText: obscureText,
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white,
-            hintText: hintText,
+            hintText: hintTextPass,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
@@ -163,7 +183,8 @@ class _LoginViewState extends State<LoginView> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Colors.red, // Set background color to red
+          backgroundColor:
+              Color.fromARGB(255, 212, 129, 12), // Set background color to red
           title: const Text('Oops!'),
           content: const Text(
               'Something went wrong singing in. Make sure the credentials you are providing are correct and that you already have an account registered'),
@@ -187,6 +208,7 @@ class _LoginViewState extends State<LoginView> {
       // Aquí va el proceso de verificación con Firebase
 
       if (existingUser) {
+        // netIsol.kill;
         Navigator.push(
             context, MaterialPageRoute(builder: (context) => BodyView()));
       } else {
@@ -237,10 +259,9 @@ class _LoginViewState extends State<LoginView> {
                             ),
                           ),
                         ),
-                        _buildTextField('Email/Username', 'user@example.com'),
+                        _buildTextField('Email/Username'),
                         const SizedBox(height: 20.0),
-                        _buildTextField1('Password', '******',
-                            obscureText: true),
+                        _buildTextField1('Password', obscureText: true),
                         const SizedBox(height: 20.0),
                         ElevatedButton(
                           onPressed: () async {

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:unimarket/Views/login_view.dart';
 import 'package:unimarket/Controllers/auth_controller.dart';
@@ -13,22 +14,43 @@ class _RegisterViewState extends State<RegisterView> {
   String contrasena = "";
   AuthController autenticador = AuthController();
   late bool registroExitoso;
+  FocusNode focusNode = FocusNode();
+  FocusNode focusNode2 = FocusNode();
+  String hintTextEmailUsername = 'Email/Username';
+  String hintTextPass = "******";
 
   @override
   void initState() {
     autenticador = AuthController();
     super.initState();
+    focusNode.addListener(() {
+      if (focusNode.hasFocus) {
+        hintTextEmailUsername = '';
+      } else {
+        hintTextEmailUsername = 'Email/Username';
+      }
+      setState(() {});
+    });
+    focusNode2.addListener(() {
+      if (focusNode2.hasFocus) {
+        hintTextPass = '';
+      } else {
+        hintTextPass = "******";
+      }
+      setState(() {});
+    });
   }
 
-  void showErrorDialog(BuildContext context) {
+  void showErrorDialog(BuildContext context, String msg) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: Colors.red, // Set background color to red
+          backgroundColor:
+              Color.fromARGB(255, 212, 129, 12), // Set background color to red
           title: const Text('Oops!'),
-          content: const Text(
-              'Something went wrong registering your user. Make sure you are using a valid email format. Make sure your password is at least 6 characters long. Make sure your email is not associated with an existing account'),
+          content: Text(msg),
+          // 'Something went wrong registering your user. Make sure you are using a valid email format. Make sure your password is at least 6 characters long. Make sure your email is not associated with an existing account'),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -67,8 +89,7 @@ class _RegisterViewState extends State<RegisterView> {
   }
 
 //hace parte del scaffold. ignorar para otras cosas
-  Widget _buildTextField(String labelText, String hintText,
-      {bool obscureText = false}) {
+  Widget _buildTextField(String labelText, {bool obscureText = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -90,11 +111,12 @@ class _RegisterViewState extends State<RegisterView> {
           onChanged: (val) {
             setState(() => email = val);
           },
+          focusNode: focusNode,
           obscureText: obscureText,
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white,
-            hintText: hintText,
+            hintText: hintTextEmailUsername,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
@@ -104,8 +126,7 @@ class _RegisterViewState extends State<RegisterView> {
     );
   }
 
-  Widget _buildTextField1(String labelText, String hintText,
-      {bool obscureText = false}) {
+  Widget _buildTextField1(String labelText, {bool obscureText = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -127,11 +148,12 @@ class _RegisterViewState extends State<RegisterView> {
           onChanged: (val) {
             setState(() => contrasena = val);
           },
+          focusNode: focusNode2,
           obscureText: obscureText,
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.white,
-            hintText: hintText,
+            hintText: hintTextPass,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
             ),
@@ -197,22 +219,15 @@ class _RegisterViewState extends State<RegisterView> {
                             ),
                           ),
                         ),
-                        _buildTextField('Email/Username', 'user@example.com'),
+                        _buildTextField('Email/Username'),
                         const SizedBox(height: 20.0),
-                        _buildTextField1('Password', '******',
-                            obscureText: true),
+                        _buildTextField1('Password', obscureText: true),
                         const SizedBox(height: 20.0),
                         ElevatedButton(
                           onPressed: () async {
-                            // try {
-                            autenticador.registrar(email, contrasena).then(
-                                (value) => value == null
-                                    ? showErrorDialog(context)
-                                    : showSuccessDialog(context));
-                            // } catch (e) {
-                            //   print(e.toString() + "9999999999999999999999");
-                            //   showErrorDialog(context);
-                            // }
+                            autenticador
+                                .registrar(email, contrasena)
+                                .then((value) => manejarValorRegistro(value));
 
                             // print(registroExitoso);
                             // registroExitoso
@@ -246,5 +261,21 @@ class _RegisterViewState extends State<RegisterView> {
         ],
       ),
     );
+  }
+
+  manejarValorRegistro(value) {
+    if (value is User) {
+      showSuccessDialog(context);
+      print("ES USER");
+    } else {
+      var valor = value.message as String;
+      if (valor == "Unable to establish connection on channel.") {
+        valor = "Please make sure you provide an email and password";
+      }
+      print(valor);
+      print("QQQQQQQQQQQQQQ");
+      print("No ES USER");
+      showErrorDialog(context, valor);
+    }
   }
 }
