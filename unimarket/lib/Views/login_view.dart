@@ -293,6 +293,7 @@ class _LoginViewState extends State<LoginView> {
                         ElevatedButton(
                           onPressed: () {
                             // Add your registration logic here
+                            FlutterIsolate.killAll();
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
